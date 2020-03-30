@@ -1,3 +1,16 @@
+
+
+* [SysBox](#sysbox)
+  * [Overview](#overview)
+  * [Tools](#tools)
+     * [collapse](#collapse)
+     * [make-password](#make-password)
+     * [splay](#splay)
+     * [ssl-expiry](#ssl-expiry)
+     * [with-lock](#with-lock)
+  * [Future Additions?](#future-additions)
+
+
 # SysBox
 
 This repository is the spiritual successor to my previous [sysadmin-utils repository](https://github.com/skx/sysadmin-util)
