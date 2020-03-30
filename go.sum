@@ -1,0 +1,4 @@
+github.com/nightlyone/lockfile v1.0.0 h1:RHep2cFKK4PonZJDdEl4GmkabuhbsRMgk/k3uAmxBiA=
+github.com/nightlyone/lockfile v1.0.0/go.mod h1:rywoIealpdNse2r832aiD9jRk8ErCatROs6LzC841CI=
+github.com/skx/subcommands v0.5.0 h1:HujAgpkuPDMWPSm7yo0nKGLgyw3GLiG/amyz3r3F4BU=
+github.com/skx/subcommands v0.5.0/go.mod h1:HpOZHVUXT5Rc/Q7UCiyj7h5u6BleDfFjt+vxy2igonA=
