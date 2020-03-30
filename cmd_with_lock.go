@@ -81,16 +81,23 @@ func (wl *withLockCommand) Execute(args []string) int {
 	//
 	// Run the command.
 	//
-	fmt.Printf("%s %s\n", args[0], args[1:])
 	cmd := exec.Command(args[0], args[1:]...)
-	var out bytes.Buffer
-	cmd.Stdout = &out
+	var stdout bytes.Buffer
+	cmd.Stdout = &stdout
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
 	err = cmd.Run()
+
+	if len(stdout.String()) > 0 {
+		fmt.Print(stdout.String())
+	}
+	if len(stderr.String()) > 0 {
+		fmt.Print(stderr.String())
+	}
 	if err != nil {
 		fmt.Printf("Error running command:%s\n", err.Error())
 		return 1
 	}
-	fmt.Println(out.String())
 
 	return 0
 }
