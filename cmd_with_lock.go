@@ -48,6 +48,14 @@ arguments, to be executed are passed through a SHA1 hash for consistency.`
 func (wl *withLockCommand) Execute(args []string) int {
 
 	//
+	// Ensure we have an argument
+	//
+	if len(args) < 1 {
+		fmt.Printf("You must specify the command to execute\n")
+		return 1
+	}
+
+	//
 	// Generate a lockfile
 	//
 	h := sha1.New()

@@ -35,6 +35,7 @@ Examples:
 Report on an SSL certificate:
 
      $ gobox ssl-expiry https://example.com/
+     $ gobox ssl-expiry example.com
 
 Report on an SMTP-certificate:
 
@@ -45,6 +46,14 @@ Report on an SMTP-certificate:
 
 // Execute runs our sub-command.
 func (s *SSLExpiryCommand) Execute(args []string) int {
+
+	//
+	// Ensure we have an argument
+	//
+	if len(args) < 1 {
+		fmt.Printf("You must specify the host(s) to test.\n")
+		return 1
+	}
 
 	// For each argument
 	for _, arg := range args {
