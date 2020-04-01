@@ -57,6 +57,10 @@ This is a simple tool which will read STDIN, and output the content without any 
 * Empty lines will be skipped entirely.
 
 
+### httpd
+
+A simple HTTP-server.  Allows serving to localhost, or to the local LAN.
+
 ### ips
 
 This tool lets you easily retrieve a list of local, or global, IPv4 and
