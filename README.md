@@ -57,6 +57,13 @@ This is a simple tool which will read STDIN, and output the content without any 
 * Empty lines will be skipped entirely.
 
 
+### ips
+
+This tool lets you easily retrieve a list of local, or global, IPv4 and
+IPv6 addresses present upon your local host.  This is a little simpler
+than trying to parse `ip -4 addr list`, although that is also the
+common approach.
+
 ### make-password
 
 This tool generates a single random password each time it is executed, it is designed to be quick and simple to use, rather than endlessly configurable.

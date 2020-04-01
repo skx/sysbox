@@ -13,6 +13,7 @@ func main() {
 	// Register each of our subcommands.
 	//
 	subcommands.Register(&collapseCommand{})
+	subcommands.Register(&ipsCommand{})
 	subcommands.Register(&passwordCommand{})
 	subcommands.Register(&splayCommand{})
 	subcommands.Register(&SSLExpiryCommand{})
