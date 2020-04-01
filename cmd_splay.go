@@ -14,9 +14,9 @@ type splayCommand struct {
 }
 
 // Arguments adds per-command args to the object.
-func (r *splayCommand) Arguments(f *flag.FlagSet) {
-	f.IntVar(&r.max, "maximum", 300, "The maximum amount of time to sleep for")
-	f.BoolVar(&r.verbose, "verbose", false, "Should we be verbose")
+func (s *splayCommand) Arguments(f *flag.FlagSet) {
+	f.IntVar(&s.max, "maximum", 300, "The maximum amount of time to sleep for")
+	f.BoolVar(&s.verbose, "verbose", false, "Should we be verbose")
 
 }
 

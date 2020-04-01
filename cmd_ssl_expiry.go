@@ -11,7 +11,7 @@ import (
 	"github.com/skx/subcommands"
 )
 
-// Structure for our options and state.
+// SSLExpiryCommand is the structure for our options and state.
 type SSLExpiryCommand struct {
 
 	// We embed the NoFlags option, because we accept no command-line flags.

@@ -21,14 +21,14 @@ type passwordCommand struct {
 }
 
 // Arguments adds per-command args to the object.
-func (r *passwordCommand) Arguments(f *flag.FlagSet) {
-	f.IntVar(&r.length, "length", 15, "The length of the password to generate")
-	f.BoolVar(&r.specials, "specials", true, "Should we use special characters?")
-	f.BoolVar(&r.digits, "digits", true, "Should we use digits?")
+func (p *passwordCommand) Arguments(f *flag.FlagSet) {
+	f.IntVar(&p.length, "length", 15, "The length of the password to generate")
+	f.BoolVar(&p.specials, "specials", true, "Should we use special characters?")
+	f.BoolVar(&p.digits, "digits", true, "Should we use digits?")
 }
 
 // Info returns the name of this subcommand.
-func (s *passwordCommand) Info() (string, string) {
+func (p *passwordCommand) Info() (string, string) {
 	return "make-password", `Generate a random password.
 
 Details:
@@ -39,7 +39,7 @@ flags if necessary.`
 }
 
 // Execute is invoked if the user specifies `make-password` as the subcommand.
-func (s *passwordCommand) Execute(args []string) int {
+func (p *passwordCommand) Execute(args []string) int {
 	rand.Seed(time.Now().UnixNano())
 
 	// Alphabets we use for generation
@@ -49,16 +49,16 @@ func (s *passwordCommand) Execute(args []string) int {
 		"abcdefghijklmnopqrstuvwxyz"
 
 	// Extend our alphabet if we should
-	if s.digits {
+	if p.digits {
 		all = all + digits
 	}
-	if s.specials {
+	if p.specials {
 		all = all + specials
 	}
 
 	// Make a buffer and fill it with all characters
-	buf := make([]byte, s.length)
-	for i := 0; i < s.length; i++ {
+	buf := make([]byte, p.length)
+	for i := 0; i < p.length; i++ {
 		buf[i] = all[rand.Intn(len(all))]
 	}
 
@@ -67,7 +67,7 @@ func (s *passwordCommand) Execute(args []string) int {
 	// We might already have them present, because our `all`
 	// alphabet was used already.  But this ensures we have at
 	// least one digit present.
-	if s.digits {
+	if p.digits {
 		buf[0] = digits[rand.Intn(len(digits))]
 	}
 
@@ -76,7 +76,7 @@ func (s *passwordCommand) Execute(args []string) int {
 	// We might already have them present, because our `all`
 	// alphabet was used already.  But this ensures we have at
 	// least one special-character present.
-	if s.specials {
+	if p.specials {
 		buf[1] = specials[rand.Intn(len(specials))]
 	}
 
