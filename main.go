@@ -13,6 +13,7 @@ func main() {
 	// Register each of our subcommands.
 	//
 	subcommands.Register(&collapseCommand{})
+	subcommands.Register(&envTemplateCommand{})
 	subcommands.Register(&httpdCommand{})
 	subcommands.Register(&ipsCommand{})
 	subcommands.Register(&passwordCommand{})

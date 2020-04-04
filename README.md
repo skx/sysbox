@@ -35,7 +35,7 @@ Or you can create symlinks to allow specific tool to be executed without the nee
 
 ## Tools
 
-The tools in this repository are currently those which are being ported from the [previous repository](https://github.com/skx/sysadmin-util).   Full help is provided via:
+The tools in this repository are primarily those which are being ported from the [previous repository](https://github.com/skx/sysadmin-util).   Full help is provided via:
 
     $ sysbox help
 
@@ -43,10 +43,7 @@ And:
 
     $ sysbox help sub-command
 
-For each command you may create a symlink to allow it to be invoked without the prefix:
-
-    $ ln -s sysbox with-lock
-    $ ./with-lock ls
+Examples are included where useful.
 
 
 ### collapse
@@ -57,9 +54,17 @@ This is a simple tool which will read STDIN, and output the content without any 
 * Empty lines will be skipped entirely.
 
 
+### env-template
+
+Perform expansion, via environmental variables, on simple golang templates.
+
+See also `envsubst` contained in `gettext{-base}`.
+
+
 ### httpd
 
 A simple HTTP-server.  Allows serving to localhost, or to the local LAN.
+
 
 ### ips
 
@@ -68,13 +73,16 @@ IPv6 addresses present upon your local host.  This is a little simpler
 than trying to parse `ip -4 addr list`, although that is also the
 common approach.
 
+
 ### make-password
 
 This tool generates a single random password each time it is executed, it is designed to be quick and simple to use, rather than endlessly configurable.
 
+
 ### splay
 
 This tool allows sleeping for a random amount of time.  This solves the problem when you have a hundred servers all running a task at the same time, triggered by cron, and you don't want to overwhelm a central host that they each talk to.
+
 
 ### ssl-expiry
 
@@ -82,11 +90,13 @@ A simple utility to report upon the number of hours, and days, until a given TLS
 
 Ideal for https-servers, but also TLS-protected SMTP hosts, etc.
 
+
 ### with-lock
 
 Allow running a command with a lock-file to prevent parallel executions.
 
 This is perfect if you fear your cron-jobs will start slowing down and overlapping executions will cause problems.
+
 
 
 ## Future Additions?
