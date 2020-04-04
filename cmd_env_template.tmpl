@@ -1,0 +1,8 @@
+Hello {{env "USER"}}!
+
+Your $PATH variable has {{len (split (env "PATH") ":")}} entries.
+
+The contents of $PATH, one per line:
+{{$arr := split (env "PATH") ":"}}
+{{range $k, $v := $arr}}* {{$k}} {{$v}}
+{{end}}

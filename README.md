@@ -58,7 +58,9 @@ This is a simple tool which will read STDIN, and output the content without any 
 
 Perform expansion, via environmental variables, on simple golang templates.
 
-See also `envsubst` contained in `gettext{-base}`.
+You can also use the built-in golang template facilities, for example please see [cmd_env_template.tmpl](cmd_env_template.tmpl), and the samples shown on the [text/template documentation](https://golang.org/pkg/text/template/).
+
+As an alternative you can consider the `envsubst` binary contained in your system's `gettext{-base}` package.
 
 
 ### httpd
