@@ -113,7 +113,12 @@ Ideal for https-servers, but also TLS-protected SMTP hosts, etc.
 
 ### validate-json
 
-Validate `*.json` files from the current working-directory, recursively, or the named directory.
+Validate `*.json` files from the current working-directory, or the named directory, recursively.
+
+
+### validate-yaml
+
+Validate `*.yaml`/`*.yml` files from the current working-directory, or the named directory, recursively.
 
 
 ### with-lock
