@@ -18,6 +18,7 @@ func main() {
 	subcommands.Register(&installCommand{})
 	subcommands.Register(&ipsCommand{})
 	subcommands.Register(&passwordCommand{})
+	subcommands.Register(&peerdCommand{})
 	subcommands.Register(&splayCommand{})
 	subcommands.Register(&SSLExpiryCommand{})
 	subcommands.Register(&withLockCommand{})
