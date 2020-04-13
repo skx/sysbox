@@ -25,6 +25,7 @@ func main() {
 	subcommands.Register(&splayCommand{})
 	subcommands.Register(&SSLExpiryCommand{})
 	subcommands.Register(&validateJSONCommand{})
+	subcommands.Register(&validateYAMLCommand{})
 	subcommands.Register(&withLockCommand{})
 
 	//
