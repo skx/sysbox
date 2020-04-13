@@ -92,6 +92,13 @@ This deamon provides the ability to maintain a local list of available cluster-m
 See the usage-information for more (`sysbox help peerd`).
 
 
+### run-directory
+
+Run every executable in the given directory, optionally terminate if any command returns a non-zero exit-code.
+
+> The exit-code handling is what inspired this addition; the Debian version of `run-parts` supports this, but the CentOS version does not.
+
+
 ### splay
 
 This tool allows sleeping for a random amount of time.  This solves the problem when you have a hundred servers all running a task at the same time, triggered by cron, and you don't want to overwhelm a central host that they each talk to.
