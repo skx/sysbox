@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/skx/subcommands"
 )
 
@@ -22,10 +24,11 @@ func main() {
 	subcommands.Register(&runDirectoryCommand{})
 	subcommands.Register(&splayCommand{})
 	subcommands.Register(&SSLExpiryCommand{})
+	subcommands.Register(&validateJSONCommand{})
 	subcommands.Register(&withLockCommand{})
 
 	//
 	// Execute the one the user chose.
 	//
-	subcommands.Execute()
+	os.Exit(subcommands.Execute())
 }

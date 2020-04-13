@@ -111,6 +111,11 @@ A simple utility to report upon the number of hours, and days, until a given TLS
 Ideal for https-servers, but also TLS-protected SMTP hosts, etc.
 
 
+### validate-json
+
+Validate `*.json` files from the current working-directory, recursively, or the named directory.
+
+
 ### with-lock
 
 Allow running a command with a lock-file to prevent parallel executions.
