@@ -90,6 +90,13 @@ common approach.
 This tool generates a single random password each time it is executed, it is designed to be quick and simple to use, rather than endlessly configurable.
 
 
+### peerd
+
+This deamon provides the ability to maintain a local list of available cluster-members, via the JSON file located at `/var/tmp/peerd.json`.
+
+See the usage-information for more (`sysbox help peerd`).
+
+
 ### splay
 
 This tool allows sleeping for a random amount of time.  This solves the problem when you have a hundred servers all running a task at the same time, triggered by cron, and you don't want to overwhelm a central host that they each talk to.
