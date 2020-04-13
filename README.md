@@ -3,11 +3,6 @@
 * [SysBox](#sysbox)
   * [Overview](#overview)
   * [Tools](#tools)
-     * [collapse](#collapse)
-     * [make-password](#make-password)
-     * [splay](#splay)
-     * [ssl-expiry](#ssl-expiry)
-     * [with-lock](#with-lock)
   * [Future Additions?](#future-additions)
 
 
