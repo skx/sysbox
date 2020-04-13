@@ -32,6 +32,8 @@ Or you can create symlinks to allow specific tool to be executed without the nee
     $ ln -s sysbox foo
     $ foo ..
 
+This process of creating symlinks can be automated via the use of the `sysbox install` sub-command.
+
 
 ## Tools
 
@@ -66,6 +68,13 @@ As an alternative you can consider the `envsubst` binary contained in your syste
 ### httpd
 
 A simple HTTP-server.  Allows serving to localhost, or to the local LAN.
+
+
+### install
+
+This command allows you to install symlinks to the binary, for ease of use:
+
+    $ sysbox install -binary=$(pwd)/sysbox -directory=~/bin | sh
 
 
 ### ips
