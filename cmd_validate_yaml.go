@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"gopkg.in/yaml.v2"
@@ -14,6 +13,9 @@ import (
 // Structure for our options and state.
 type validateYAMLCommand struct {
 
+	// comma-separated list of files to exclude
+	exclude string
+
 	// Should we be verbose in what we're testing.
 	verbose bool
 }
@@ -21,7 +23,7 @@ type validateYAMLCommand struct {
 // Arguments adds per-command args to the object.
 func (vy *validateYAMLCommand) Arguments(f *flag.FlagSet) {
 	f.BoolVar(&vy.verbose, "verbose", false, "Should we be verbose")
-
+	f.StringVar(&vy.exclude, "exclude", "", "Comma-separated list of files to exclude")
 }
 
 // Info returns the name of this subcommand.
@@ -42,11 +44,6 @@ argument to the sub-command.`
 func (vy *validateYAMLCommand) validateYAML(path string) bool {
 
 	//
-	// Files we found.
-	//
-	var fileList []string
-
-	//
 	// Did we see a failure?
 	//
 	fail := false
@@ -54,30 +51,54 @@ func (vy *validateYAMLCommand) validateYAML(path string) bool {
 	//
 	// Find all files
 	//
-	err := filepath.Walk(path, func(path string, f os.FileInfo, err error) error {
+	files, err := FindFiles(path, []string{".yaml", ".yml"})
 
-		if strings.HasSuffix(path, ".yaml") && !f.IsDir() {
-			fileList = append(fileList, path)
-		}
-		if strings.HasSuffix(path, ".yml") && !f.IsDir() {
-			fileList = append(fileList, path)
-		}
-		return err
-	})
-
+	//
+	// Failure?
+	//
 	if err != nil {
 		fmt.Printf("Error looking for files: %s\n", err.Error())
 		os.Exit(1)
 	}
 
 	//
+	// Split excluded files, if any
+	//
+	var excluded []string
+	if vy.exclude != "" {
+		excluded = strings.Split(vy.exclude, ",")
+	}
+
+	//
 	// Now we walk the list of files we're going to process,
 	// and we process each one.
 	//
-	for _, file := range fileList {
+	for _, file := range files {
+
+		//
+		// We default to not excluding files.
+		//
+		exclude := false
+
+		//
+		// Exclude this file?
+		//
+		for _, ex := range excluded {
+
+			if strings.Contains(file, ex) {
+				exclude = true
+			}
+		}
 
 		if vy.verbose {
-			fmt.Printf("Testing: %s\n", file)
+			if exclude {
+				fmt.Printf("Excluded: %s\n", file)
+			} else {
+				fmt.Printf("Testing: %s\n", file)
+			}
+		}
+		if exclude {
+			continue
 		}
 
 		err := vy.validateFile(file)
