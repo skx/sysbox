@@ -65,6 +65,11 @@ More complete help for each command should be available like so:
 Examples are included where useful.
 
 
+## chronic
+
+The chronic command is ideally suited to wrap cronjobs, it runs the command you specify as a child process and hides the output produced __unless__ that process exits with a non-zero exit-code.
+
+
 ## collapse
 
 This is a simple tool which will read STDIN, and output the content without any extra whitespace:
