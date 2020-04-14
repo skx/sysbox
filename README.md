@@ -1,9 +1,14 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/skx/sysbox)](https://goreportcard.com/report/github.com/skx/sysbox)
+[![license](https://img.shields.io/github/license/skx/sysbox.svg)](https://github.com/skx/sysbox/blob/master/LICENSE)
+[![Release](https://img.shields.io/github/release/skx/sysbox.svg)](https://github.com/skx/sysbox/releases/latest)
 
 
 * [SysBox](#sysbox)
-  * [Overview](#overview)
-  * [Tools](#tools)
-  * [Future Additions?](#future-additions)
+  * [Installation](#installation)
+* [Overview](#overview)
+* [Tools](#tools)
+* [Future Additions?](#future-additions)
+* [Github Setup](#github-setup)
 
 
 # SysBox
@@ -12,10 +17,21 @@ This repository is the spiritual successor to my previous [sysadmin-utils reposi
 
 The idea here is to collect simple utilities and package them as a single binary, written in go, in a similar fashion to the `busybox` utility.
 
+## Installation
 
-## Overview
+Installation upon a system which already contains a go-compiler should be as simple as:
 
-Much like busybox there will be a single binary, `sysbox`, which implements a number of sub-commands.
+```
+$ go get github.com/skx/sysbox
+```
+
+If you prefer you can find binary releases upon our [download page]().
+
+
+
+# Overview
+
+This application is built, and distributed, as a single-binary named`sysbox`, which implements a number of sub-commands.
 
 You can either run the tools individually:
 
@@ -34,7 +50,7 @@ This process of creating symlinks can be automated via the use of the `sysbox in
 
 
 
-## Tools
+# Tools
 
 The tools in this repository started out as being simple ports of the tools in my [previous repository](https://github.com/skx/sysadmin-util), however I've now started to expand them and fold in things I've used/created in the past.
 
@@ -49,7 +65,7 @@ More complete help for each command should be available like so:
 Examples are included where useful.
 
 
-### collapse
+## collapse
 
 This is a simple tool which will read STDIN, and output the content without any extra whitespace:
 
@@ -57,7 +73,7 @@ This is a simple tool which will read STDIN, and output the content without any 
 * Empty lines will be skipped entirely.
 
 
-### env-template
+## env-template
 
 Perform expansion, via environmental variables, on simple golang templates.
 
@@ -66,19 +82,19 @@ You can freely use the built-in golang template facilities, for example please s
 > As an alternative you can consider the `envsubst` binary contained in your system's `gettext{-base}` package.
 
 
-### httpd
+## httpd
 
 A simple HTTP-server.  Allows serving to localhost, or to the local LAN.
 
 
-### install
+## install
 
 This command allows you to install symlinks to the binary, for ease of use:
 
     $ sysbox install -binary=$(pwd)/sysbox -directory=~/bin | sh
 
 
-### ips
+## ips
 
 This tool lets you easily retrieve a list of local, or global, IPv4 and
 IPv6 addresses present upon your local host.  This is a little simpler
@@ -86,48 +102,48 @@ than trying to parse `ip -4 addr list`, although that is also the
 common approach.
 
 
-### make-password
+## make-password
 
 This tool generates a single random password each time it is executed, it is designed to be quick and simple to use, rather than endlessly configurable.
 
 
-### peerd
+## peerd
 
 This deamon provides the ability to maintain a local list of available cluster-members, via the JSON file located at `/var/tmp/peerd.json`.
 
 See the usage-information for more (`sysbox help peerd`).
 
 
-### run-directory
+## run-directory
 
 Run every executable in the given directory, optionally terminate if any command returns a non-zero exit-code.
 
 > The exit-code handling is what inspired this addition; the Debian version of `run-parts` supports this, but the CentOS version does not.
 
 
-### splay
+## splay
 
 This tool allows sleeping for a random amount of time.  This solves the problem when you have a hundred servers all running a task at the same time, triggered by `cron`, and you don't want to overwhelm a central resource that they each consume.
 
 
-### ssl-expiry
+## ssl-expiry
 
 A simple utility to report upon the number of hours, and days, until a given TLS certificate (or any intermediary in the chain) expires.
 
 Ideal for https-servers, but also TLS-protected SMTP hosts, etc.
 
 
-### validate-json
+## validate-json
 
 Validate `*.json` files from the current working-directory, or the named directory, recursively.
 
 
-### validate-yaml
+## validate-yaml
 
 Validate `*.yaml`/`*.yml` files from the current working-directory, or the named directory, recursively.
 
 
-### with-lock
+## with-lock
 
 Allow running a command with a lock-file to prevent parallel executions.
 
@@ -135,12 +151,12 @@ This is perfect if you fear your cron-jobs will start slowing down and overlappi
 
 
 
-## Future Additions?
+# Future Additions?
 
 Unlike the previous repository I'm much happier to allow submissions of new utilities, or sub-commands, in this repository.
 
 
-## Github Setup
+# Github Setup
 
 This repository is configured to run tests upon every commit, and when
 pull-requests are created/updated.  The testing is carried out via
