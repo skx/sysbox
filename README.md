@@ -27,16 +27,22 @@ Or you can create symlinks to allow specific tool to be executed without the nee
     $ ln -s sysbox foo
     $ foo ..
 
-This process of creating symlinks can be automated via the use of the `sysbox install` sub-command.
+This process of creating symlinks can be automated via the use of the `sysbox install` sub-command, which would allow you to install the tools globally like so:
+
+    $ go get github.com/skx/sysbox
+    $ $GOPATH/bin/sysbox install -binary $GOPATH/bin/sysbox -directory /usr/local/bin | sudo sh
+
 
 
 ## Tools
 
-The tools in this repository are primarily those which are being ported from the [previous repository](https://github.com/skx/sysadmin-util).   Full help is provided via:
+The tools in this repository started out as being simple ports of the tools in my [previous repository](https://github.com/skx/sysadmin-util), however I've now started to expand them and fold in things I've used/created in the past.
+
+You can view a brief list of the commands via:
 
     $ sysbox help
 
-And:
+More complete help for each command should be available like so:
 
     $ sysbox help sub-command
 
@@ -55,9 +61,9 @@ This is a simple tool which will read STDIN, and output the content without any 
 
 Perform expansion, via environmental variables, on simple golang templates.
 
-You can also use the built-in golang template facilities, for example please see [cmd_env_template.tmpl](cmd_env_template.tmpl), and the samples shown on the [text/template documentation](https://golang.org/pkg/text/template/).
+You can freely use the built-in golang template facilities, for example please see the sample template here [cmd_env_template.tmpl](cmd_env_template.tmpl), and the the examples included in the [text/template documentation](https://golang.org/pkg/text/template/).
 
-As an alternative you can consider the `envsubst` binary contained in your system's `gettext{-base}` package.
+> As an alternative you can consider the `envsubst` binary contained in your system's `gettext{-base}` package.
 
 
 ### httpd
@@ -101,7 +107,7 @@ Run every executable in the given directory, optionally terminate if any command
 
 ### splay
 
-This tool allows sleeping for a random amount of time.  This solves the problem when you have a hundred servers all running a task at the same time, triggered by cron, and you don't want to overwhelm a central host that they each talk to.
+This tool allows sleeping for a random amount of time.  This solves the problem when you have a hundred servers all running a task at the same time, triggered by `cron`, and you don't want to overwhelm a central resource that they each consume.
 
 
 ### ssl-expiry
