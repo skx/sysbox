@@ -25,7 +25,7 @@ Installation upon a system which already contains a go-compiler should be as sim
 $ go get github.com/skx/sysbox
 ```
 
-If you prefer you can find binary releases upon our [download page]().
+If you prefer you can find binary releases upon our [download page](https://github.com/skx/sysbox/releases).
 
 
 
