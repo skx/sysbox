@@ -8,7 +8,8 @@ import (
 	"strings"
 )
 
-// Find files which have names ending in the specified patterns.
+// FindFiles finds any file beneath the given prefix-directory which contains
+// a suffix included in the list.
 func FindFiles(path string, suffixes []string) ([]string, error) {
 
 	var results []string

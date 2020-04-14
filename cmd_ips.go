@@ -158,26 +158,26 @@ func (i *ipsCommand) Execute(args []string) int {
 		}
 
 		// If we're not showing locals, then skip if this is.
-		if i.local == false && i.isLocal(ipnet) {
+		if !i.local && i.isLocal(ipnet) {
 			continue
 		}
 
 		// If we're not showing globals, then skip if this is
-		if i.remote == false && !i.isLocal(ipnet) {
+		if !i.remote && !i.isLocal(ipnet) {
 			continue
 		}
 
-		res := fmt.Sprintf("%s", ipnet.IP.String())
+		res := ipnet.IP.String()
 
 		// If we're not showing IPv4 and the address is that
 		// then skip it
-		if i.ipv4 == false && !strings.Contains(res, ":") {
+		if !i.ipv4 && !strings.Contains(res, ":") {
 			continue
 		}
 
 		// If we're not showing IPv6 and the address is that then
 		// skip it
-		if i.ipv6 == false && strings.Contains(res, ":") {
+		if !i.ipv6 && strings.Contains(res, ":") {
 			continue
 		}
 

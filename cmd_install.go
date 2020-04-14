@@ -31,7 +31,7 @@ func (i *installCommand) Arguments(f *flag.FlagSet) {
 }
 
 // Info returns the name of this subcommand.
-func (s *installCommand) Info() (string, string) {
+func (i *installCommand) Info() (string, string) {
 	return "install", `Create symlinks for each known binary.
 
 Details:

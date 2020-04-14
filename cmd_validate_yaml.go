@@ -113,7 +113,7 @@ func (vy *validateYAMLCommand) validateYAML(path string) bool {
 }
 
 // Validate a single file
-func (vj *validateYAMLCommand) validateFile(path string) error {
+func (vy *validateYAMLCommand) validateFile(path string) error {
 
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -130,7 +130,7 @@ func (vj *validateYAMLCommand) validateFile(path string) error {
 }
 
 // Execute is invoked if the user specifies `validate-yaml` as the subcommand.
-func (vj *validateYAMLCommand) Execute(args []string) int {
+func (vy *validateYAMLCommand) Execute(args []string) int {
 
 	path := "."
 
@@ -139,7 +139,7 @@ func (vj *validateYAMLCommand) Execute(args []string) int {
 
 	}
 
-	if vj.validateYAML(path) {
+	if vy.validateYAML(path) {
 		return 1
 	}
 	return 0

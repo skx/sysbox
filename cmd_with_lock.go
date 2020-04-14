@@ -80,8 +80,8 @@ func (wl *withLockCommand) Execute(args []string) int {
 	}
 
 	defer func() {
-		if err := lock.Unlock(); err != nil {
-			fmt.Printf("Cannot unlock %q, reason: %v", lock, err)
+		if errr := lock.Unlock(); errr != nil {
+			fmt.Printf("Cannot unlock %q, reason: %v", lock, errr)
 			os.Exit(1)
 		}
 	}()
