@@ -91,10 +91,7 @@ func (t *timeoutCommand) Execute(args []string) int {
 	//
 	// Wait for our command to complete.
 	//
-	select {
-	case <-ctx.Done():
-		// All done.
-	}
+	<-ctx.Done()
 
 	return 0
 }
