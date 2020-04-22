@@ -161,5 +161,4 @@ func (p *peerdCommand) Execute(args []string) int {
 		time.Sleep(5 * time.Second)
 	}
 
-	return 0
 }

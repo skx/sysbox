@@ -25,6 +25,7 @@ func main() {
 	subcommands.Register(&runDirectoryCommand{})
 	subcommands.Register(&splayCommand{})
 	subcommands.Register(&SSLExpiryCommand{})
+	subcommands.Register(&timeoutCommand{})
 	subcommands.Register(&validateJSONCommand{})
 	subcommands.Register(&validateYAMLCommand{})
 	subcommands.Register(&withLockCommand{})
