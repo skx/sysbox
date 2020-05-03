@@ -14,6 +14,7 @@ func main() {
 	//
 	// Register each of our subcommands.
 	//
+	subcommands.Register(&calcCommand{})
 	subcommands.Register(&chronicCommand{})
 	subcommands.Register(&collapseCommand{})
 	subcommands.Register(&envTemplateCommand{})

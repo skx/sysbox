@@ -65,6 +65,13 @@ More complete help for each command should be available like so:
 Examples are included where useful.
 
 
+## calc
+
+A simple calculator, which understands floating points, which `expr` never does.
+
+Portions of this code from [Porting Eval to Go](https://thorstenball.com/blog/2016/11/16/putting-eval-in-go/), by Thorsten Ball.  (I expanded it to support parenthesis, for precedence, and the use of floating-point numbers rather than integers.)
+
+
 ## chronic
 
 The chronic command is ideally suited to wrap cronjobs, it runs the command you specify as a child process and hides the output produced __unless__ that process exits with a non-zero exit-code.
