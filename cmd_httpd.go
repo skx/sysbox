@@ -56,7 +56,7 @@ func (h *httpdCommand) Execute(args []string) int {
 	http.Handle("/", fs)
 
 	//
-	// Build up the listen addres.
+	// Build up the listen address.
 	//
 	listen := fmt.Sprintf("%s:%d", h.host, h.port)
 
