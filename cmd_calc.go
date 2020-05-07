@@ -1,12 +1,15 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"log"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/skx/subcommands"
 )
@@ -95,26 +98,15 @@ func (c *calcCommand) evalBinaryExpr(exp *ast.BinaryExpr) float64 {
 	return 0
 }
 
-// Execute is invoked if the user specifies `calc` as the subcommand.
-func (c *calcCommand) Execute(args []string) int {
-
-	//
-	// Join all arguments, in case we have been given "3", "+", "4".
-	//
-	input := ""
-
-	for _, arg := range args {
-		input += arg
-		input += " "
-	}
+// Evaluate processes the given string.
+func (c *calcCommand) Evaluate(input string) error {
 
 	//
 	// Parse to AST
 	//
 	exp, err := parser.ParseExpr(input)
 	if err != nil {
-		fmt.Printf("failed to parse '%s': %s\n", input, err)
-		return 1
+		return fmt.Errorf("failed to parse '%s': %s", input, err)
 	}
 
 	//
@@ -134,6 +126,83 @@ func (c *calcCommand) Execute(args []string) int {
 		// OK show the floating-point result.
 		//
 		fmt.Printf("%f\n", res)
+	}
+
+	return nil
+}
+
+// Execute is invoked if the user specifies `calc` as the subcommand.
+func (c *calcCommand) Execute(args []string) int {
+
+	//
+	// Join all arguments, in case we have been given "3", "+", "4".
+	//
+	input := ""
+
+	for _, arg := range args {
+		input += arg
+		input += " "
+	}
+
+	//
+	// If we have no arguments then we're in the repl.
+	//
+	// Otherwise we process the input.
+	//
+	if len(input) > 0 {
+		err := c.Evaluate(input)
+		if err != nil {
+			fmt.Printf("ERROR: %s\n", err.Error())
+			return 1
+		}
+		return 0
+	}
+
+	//
+	// Repl.
+	//
+	scanner := bufio.NewScanner(os.Stdin)
+
+	//
+	// Show the prompt and read the lines
+	//
+	fmt.Printf("calc> ")
+	for scanner.Scan() {
+
+		//
+		// Get the input, and trim it
+		//
+		input := scanner.Text()
+		input = strings.TrimSpace(input)
+
+		//
+		// Exit ?
+		//
+		if strings.HasPrefix(input, "exit") ||
+			strings.HasPrefix(input, "quit") {
+			return 0
+		}
+
+		//
+		// Ignore it, unless it is non-empty
+		//
+		if input != "" {
+
+			//
+			// Evaluate it
+			//
+			err := c.Evaluate(input)
+			if err != nil {
+				fmt.Printf("ERROR: %s\n", err.Error())
+				return 1
+			}
+		}
+
+		fmt.Printf("calc> ")
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Println(err)
 	}
 
 	//
