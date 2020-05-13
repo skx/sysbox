@@ -94,6 +94,11 @@ You can freely use the built-in golang template facilities, for example please s
 > As an alternative you can consider the `envsubst` binary contained in your system's `gettext{-base}` package.
 
 
+## fingerd
+
+A trivial finger-server.
+
+
 ## httpd
 
 A simple HTTP-server.  Allows serving to localhost, or to the local LAN.

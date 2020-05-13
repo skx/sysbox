@@ -18,6 +18,7 @@ func main() {
 	subcommands.Register(&chronicCommand{})
 	subcommands.Register(&collapseCommand{})
 	subcommands.Register(&envTemplateCommand{})
+	subcommands.Register(&fingerdCommand{})
 	subcommands.Register(&httpdCommand{})
 	subcommands.Register(&httpGetCommand{})
 	subcommands.Register(&installCommand{})
