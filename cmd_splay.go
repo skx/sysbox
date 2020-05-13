@@ -37,7 +37,7 @@ likely to happen if you're running with good clocks).
 Give each script a random-delay via adding a call to the splay subcommand.`
 }
 
-// Execute is invoked if the user specifies `version` as the subcommand.
+// Execute is invoked if the user specifies `splay` as the subcommand.
 func (s *splayCommand) Execute(args []string) int {
 
 	// Ensure we seed our random number generator.

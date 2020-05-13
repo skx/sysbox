@@ -39,7 +39,7 @@ as expected, for example
 $ sysbox timeout -duration=10 top`
 }
 
-// Execute is invoked if the user specifies `version` as the subcommand.
+// Execute is invoked if the user specifies `timeout` as the subcommand.
 func (t *timeoutCommand) Execute(args []string) int {
 
 	if len(args) <= 0 {

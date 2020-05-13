@@ -120,7 +120,7 @@ Firewalling:
 The communication happens over port 7946.`
 }
 
-// Execute is invoked if the user specifies `version` as the subcommand.
+// Execute is invoked if the user specifies `peerd` as the subcommand.
 func (p *peerdCommand) Execute(args []string) int {
 
 	// Create a mutex

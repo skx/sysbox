@@ -45,7 +45,7 @@ $ sysbox httpd -host=0.0.0.0 -port 8080
 
 }
 
-// Execute is invoked if the user specifies `version` as the subcommand.
+// Execute is invoked if the user specifies `httpd` as the subcommand.
 func (h *httpdCommand) Execute(args []string) int {
 
 	//
