@@ -2,9 +2,13 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"strings"
 	"time"
 
+	"github.com/anacrolix/log"
 	"github.com/anacrolix/torrent"
+	"github.com/dustin/go-humanize"
 	"github.com/skx/subcommands"
 )
 
@@ -28,6 +32,41 @@ Example:
     $ sysbox torrent magnet:?xt=urn:btih:ZOCMZQIPFFW7OLLMIC5HUB6BPCSDEOQU`
 }
 
+func torrentBar(t *torrent.Torrent) {
+	go func() {
+		if t.Info() == nil {
+			<-t.GotInfo()
+		}
+		var lastLine string
+		for {
+			var completedPieces, partialPieces int
+			psrs := t.PieceStateRuns()
+			for _, r := range psrs {
+				if r.Complete {
+					completedPieces += r.Length
+				}
+				if r.Partial {
+					partialPieces += r.Length
+				}
+			}
+			line := fmt.Sprintf(
+				"downloading %q: %s/%s, %d/%d pieces completed (%d partial)\n",
+				t.Name(),
+				humanize.Bytes(uint64(t.BytesCompleted())),
+				humanize.Bytes(uint64(t.Length())),
+				completedPieces,
+				t.NumPieces(),
+				partialPieces,
+			)
+			if line != lastLine {
+				lastLine = line
+				os.Stdout.WriteString(line)
+			}
+			time.Sleep(time.Second)
+		}
+	}()
+}
+
 // Execute is invoked if the user specifies `torrent` as the subcommand.
 func (s *torrentCommand) Execute(args []string) int {
 
@@ -40,9 +79,23 @@ func (s *torrentCommand) Execute(args []string) int {
 	}
 
 	//
-	// Create a client.
+	// Ensure we have a magnet:-link
 	//
-	c, err := torrent.NewClient(nil)
+	if !strings.HasPrefix(args[0], "magnet:") {
+		fmt.Printf("Usage: $sysbox torrent magnet:?....\n")
+		return 1
+	}
+
+	//
+	// Create the default client-configuration.
+	//
+	clientConfig := torrent.NewDefaultClientConfig()
+	clientConfig.Logger = log.Discard
+
+	//
+	// Create the client.
+	//
+	c, err := torrent.NewClient(clientConfig)
 	if err != nil {
 		fmt.Printf("failed to create torrent client: %s\n", err.Error())
 		return 1
@@ -50,7 +103,7 @@ func (s *torrentCommand) Execute(args []string) int {
 	defer c.Close()
 
 	//
-	// Add each magnet link
+	// Add the magnet link
 	//
 	t, err := c.AddMagnet(args[0])
 	if err != nil {
@@ -64,33 +117,14 @@ func (s *torrentCommand) Execute(args []string) int {
 	start := time.Now()
 
 	//
+	// Spawn a progress-bar.
+	//
+	torrentBar(t)
+
+	//
 	// Await information to be loaded from the torrent.
 	//
 	<-t.GotInfo()
-
-	//
-	// Get the torrent content-list.
-	//
-	files := t.Files()
-
-	//
-	// Show header.
-	//
-	if len(files) == 0 {
-		fmt.Printf("torrent contains no files\n")
-		return 1
-	} else if len(files) == 1 {
-		fmt.Printf("torrent contains the following file:\n")
-	} else {
-		fmt.Printf("torrent contains the following %d files:\n", len(files))
-	}
-
-	//
-	// Show files.
-	//
-	for _, file := range files {
-		fmt.Printf("\t%s\n", file.DisplayPath())
-	}
 
 	//
 	// Await completion of download.

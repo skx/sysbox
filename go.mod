@@ -6,6 +6,7 @@ require (
 	github.com/anacrolix/log v0.7.0
 	github.com/anacrolix/torrent v1.15.2
 	github.com/creack/pty v1.1.7
+	github.com/dustin/go-humanize v1.0.0
 	github.com/hashicorp/memberlist v0.2.0
 	github.com/kr/pty v1.1.8
 	github.com/nightlyone/lockfile v1.0.0
