@@ -150,6 +150,15 @@ Ideal for https-servers, but also TLS-protected SMTP hosts, etc.
 Run a command, but kill it after the given number of seconds.  The command is executed with a PTY so you can run interactive things such as `top`, `mutt`, etc.
 
 
+## torrent
+
+Simple bittorrent client, which allows downloading a magnet-based torrent.  For example to download an Ubuntu ISO:
+
+```
+$ sysbox torrent magnet:?xt=urn:btih:ZOCMZQIPFFW7OLLMIC5HUB6BPCSDEOQU
+```
+
+
 ## validate-json
 
 Validate `*.json` files from the current working-directory, or the named directory, recursively.

@@ -27,6 +27,7 @@ func main() {
 	subcommands.Register(&splayCommand{})
 	subcommands.Register(&SSLExpiryCommand{})
 	subcommands.Register(&timeoutCommand{})
+	subcommands.Register(&torrentCommand{})
 	subcommands.Register(&validateJSONCommand{})
 	subcommands.Register(&validateYAMLCommand{})
 	subcommands.Register(&withLockCommand{})
