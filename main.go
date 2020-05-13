@@ -19,6 +19,7 @@ func main() {
 	subcommands.Register(&collapseCommand{})
 	subcommands.Register(&envTemplateCommand{})
 	subcommands.Register(&httpdCommand{})
+	subcommands.Register(&httpGetCommand{})
 	subcommands.Register(&installCommand{})
 	subcommands.Register(&ipsCommand{})
 	subcommands.Register(&passwordCommand{})

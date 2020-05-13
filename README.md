@@ -99,6 +99,12 @@ You can freely use the built-in golang template facilities, for example please s
 A simple HTTP-server.  Allows serving to localhost, or to the local LAN.
 
 
+
+## http-get
+
+Very much "curl-lite", allows you to fetch the contents of a remote URL.  SSL errors, etc, are handled, but there are zero configuration options.
+
+
 ## install
 
 This command allows you to install symlinks to the binary, for ease of use:
