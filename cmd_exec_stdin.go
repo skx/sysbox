@@ -2,21 +2,34 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"os"
 	"os/exec"
 	"regexp"
 	"strconv"
 	"strings"
-
-	"github.com/skx/subcommands"
 )
 
 // Structure for our options and state.
 type execSTDINCommand struct {
 
-	// We embed the NoFlags option, because we accept no command-line flags.
-	subcommands.NoFlags
+	// testing the command
+	dryRun bool
+
+	// verbose flag
+	verbose bool
+
+	// field separator
+	split string
+}
+
+// Arguments adds per-command args to the object.
+func (es *execSTDINCommand) Arguments(f *flag.FlagSet) {
+	f.BoolVar(&es.dryRun, "dry-run", false, "Don't run the command.")
+	f.BoolVar(&es.verbose, "verbose", false, "Be verbose")
+	f.StringVar(&es.split, "split", "", "Split on a different character")
+
 }
 
 // Info returns the name of this subcommand.
@@ -48,7 +61,18 @@ To show all input you'd run:
 
   $ echo -e "foo\tbar\nbar\tSteve" | sysbox exec-stdin echo {}
   foo bar
-  bar Steve`
+  bar Steve
+
+Flags:
+
+If you prefer you can split fields on specific characters, which is useful
+for operating upon CSV files, or in case you wish to split '/etc/passwd' on
+':' to work on usernames:
+
+  $ sysbox exec-stdin -split=: groups {1}
+
+The only other flag is '-verbose', to show the command that would be
+executed and 'dry-run' to avoid running anything.`
 }
 
 // Execute is invoked if the user specifies `exec-stdin` as the subcommand.
@@ -105,6 +129,13 @@ func (es *execSTDINCommand) Execute(args []string) int {
 		fields := strings.Fields(line)
 
 		//
+		// Different split character?
+		//
+		if es.split != "" {
+			fields = strings.Split(line, es.split)
+		}
+
+		//
 		// Copy the string
 		//
 		sh := cmd
@@ -153,20 +184,30 @@ func (es *execSTDINCommand) Execute(args []string) int {
 		sh = strings.ReplaceAll(sh, "{}", line)
 
 		//
-		// Run
+		// Show command if being verbose
 		//
-		pieces := strings.Fields(sh)
-		cmd := exec.Command(pieces[0], pieces[1:]...)
-		out, err := cmd.CombinedOutput()
-		if err != nil {
-			fmt.Printf("Error running '%s': %s\n", sh, err.Error())
-			return 1
+		if es.verbose || es.dryRun {
+			fmt.Printf("%s\n", sh)
 		}
 
 		//
-		// Show the output
+		// Run, unless we're not supposed to
 		//
-		fmt.Printf("%s", out)
+		if !es.dryRun {
+
+			pieces := strings.Fields(sh)
+			cmd := exec.Command(pieces[0], pieces[1:]...)
+			out, err := cmd.CombinedOutput()
+			if err != nil {
+				fmt.Printf("Error running '%s': %s\n", sh, err.Error())
+				return 1
+			}
+
+			//
+			// Show the output
+			//
+			fmt.Printf("%s", out)
+		}
 
 		//
 		// Loop again
