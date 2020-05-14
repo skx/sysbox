@@ -1,20 +1,20 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
 	"text/template"
+
+	"github.com/skx/subcommands"
 )
 
 // Structure for our options and state.
 type envTemplateCommand struct {
-}
 
-// Arguments adds per-command args to the object.
-func (et *envTemplateCommand) Arguments(f *flag.FlagSet) {
+	// We embed the NoFlags option, because we accept no command-line flags.
+	subcommands.NoFlags
 }
 
 // Info returns the name of this subcommand.
