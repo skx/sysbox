@@ -163,8 +163,8 @@ func (es *execSTDINCommand) Execute(args []string) int {
 			//
 			// Convert the string to a number.
 			//
-			num, err := strconv.Atoi(match)
-			if err != nil {
+			num, error := strconv.Atoi(match)
+			if error != nil {
 				fmt.Printf("failed to convert %s to number: %s", match, err.Error())
 				return 1
 			}
@@ -197,9 +197,9 @@ func (es *execSTDINCommand) Execute(args []string) int {
 
 			pieces := strings.Fields(sh)
 			cmd := exec.Command(pieces[0], pieces[1:]...)
-			out, err := cmd.CombinedOutput()
-			if err != nil {
-				fmt.Printf("Error running '%s': %s\n", sh, err.Error())
+			out, errr := cmd.CombinedOutput()
+			if errr != nil {
+				fmt.Printf("Error running '%s': %s\n", sh, errr.Error())
 				return 1
 			}
 
