@@ -30,6 +30,7 @@ func main() {
 	subcommands.Register(&SSLExpiryCommand{})
 	subcommands.Register(&timeoutCommand{})
 	subcommands.Register(&torrentCommand{})
+	subcommands.Register(&treeCommand{})
 	subcommands.Register(&validateJSONCommand{})
 	subcommands.Register(&validateYAMLCommand{})
 	subcommands.Register(&withLockCommand{})

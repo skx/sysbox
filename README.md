@@ -170,6 +170,11 @@ $ sysbox torrent magnet:?xt=urn:btih:ZOCMZQIPFFW7OLLMIC5HUB6BPCSDEOQU
 ```
 
 
+## tree
+
+Trivial command to display the contents of a filesystem, as a nested tree.  This is similar to the standard `tree` command, without the nesting and ASCII graphics.
+
+
 ## validate-json
 
 Validate `*.json` files from the current working-directory, or the named directory, recursively.
