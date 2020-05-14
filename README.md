@@ -101,7 +101,11 @@ the line read either completely, or by fields.
 
 For example:
 
-   $ ps -ef | sysbox exec-stdin echo field1:{1} field2:{2} line:{}
+```
+$ ps -ef | sysbox exec-stdin echo field1:{1} field2:{2} line:{}
+```
+
+See the usage-information for more (`sysbox help exec-stdin`).
 
 
 ## fingerd
@@ -124,7 +128,9 @@ Very much "curl-lite", allows you to fetch the contents of a remote URL.  SSL er
 
 This command allows you to install symlinks to the binary, for ease of use:
 
-    $ sysbox install -binary=$(pwd)/sysbox -directory=~/bin | sh
+```
+$ sysbox install -binary=$(pwd)/sysbox -directory=~/bin | sh
+```
 
 
 ## ips
