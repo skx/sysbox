@@ -94,6 +94,16 @@ You can freely use the built-in golang template facilities, for example please s
 > As an alternative you can consider the `envsubst` binary contained in your system's `gettext{-base}` package.
 
 
+## exec-stdin
+
+Read STDIN, and allow running a command for each line.  You can refer to
+the line read either completely, or by fields.
+
+For example:
+
+   $ ps -ef | sysbox exec-stdin echo field1:{1} field2:{2} line:{}
+
+
 ## fingerd
 
 A trivial finger-server.
