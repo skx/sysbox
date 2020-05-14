@@ -31,6 +31,7 @@ func main() {
 	subcommands.Register(&timeoutCommand{})
 	subcommands.Register(&torrentCommand{})
 	subcommands.Register(&treeCommand{})
+	subcommands.Register(&urlsCommand{})
 	subcommands.Register(&validateJSONCommand{})
 	subcommands.Register(&validateYAMLCommand{})
 	subcommands.Register(&withLockCommand{})

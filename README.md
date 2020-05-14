@@ -175,6 +175,11 @@ $ sysbox torrent magnet:?xt=urn:btih:ZOCMZQIPFFW7OLLMIC5HUB6BPCSDEOQU
 Trivial command to display the contents of a filesystem, as a nested tree.  This is similar to the standard `tree` command, without the nesting and ASCII graphics.
 
 
+## urls
+
+Extract URLs from the named files, or STDIN.  URLs are parsed naively with a simple regular expression and only `http` and `https` schemes are recognized.
+
+
 ## validate-json
 
 Validate `*.json` files from the current working-directory, or the named directory, recursively.
