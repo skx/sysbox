@@ -104,7 +104,7 @@ func (fc *fingerdCommand) getUserInfo(usr string) ([]byte, error) {
 	}
 	data, err := ioutil.ReadFile(u.HomeDir + "/.plan")
 	if err != nil {
-		return data, errors.New("User doesn't have a .plan file!\n")
+		return data, errors.New("user doesn't have a .plan file")
 	}
 	return data, nil
 }
