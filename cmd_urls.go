@@ -33,7 +33,21 @@ Examples:
 
   $ echo "https://example.com/ test " | sysbox urls
   $ sysbox urls ~/Org/bookmarks.org
-`
+
+Limitations:
+
+Since we're doing a naive job there are limitations, the most obvious
+one is that we use a simple regular expression to find URLs.  I've
+chosen break URLs when I hit a ')' or ']' character, which means markdown
+files can be parsed neatly.  This does mean it is possible valid links
+will be truncated.
+
+For example Wikipedia will contain links like this, which will be truncated
+incorrectly:
+
+  http://en.wikipedia.org/...(foo)
+
+(i.e The trailing ')' will be removed.)`
 }
 
 // Match our regular expression against the given reader
@@ -67,7 +81,14 @@ func (u *urlsCommand) Execute(args []string) int {
 	//
 	// Naive pattern for URL matching.
 	//
-	u.reg = regexp.MustCompile(`(https?://[^"' \n\r\t\]]+)`)
+	// NOTE: This stops when we hit characters that are valid
+	//       for example ")", "]", ",", "'", "\", etc.
+	//
+	//       This is helpful for Markdown documents, however it IS
+	//       wrong.
+	//
+	pattern := "(https?://[^\\\\\"'` \n\r\t\\]\\,)]+)"
+	u.reg = regexp.MustCompile(pattern)
 
 	//
 	// Read from STDIN
