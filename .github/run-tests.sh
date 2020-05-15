@@ -1,9 +1,9 @@
 #!/bin/sh
 
-# Install tools to test our code-quality.
-go get -u golang.org/x/lint/golint
-go get -u golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow
-go get -u honnef.co/go/tools/cmd/staticcheck
+# Install tools to test our code-quality, if missing.
+type golint  2>/dev/null >/dev/null  || go get -u golang.org/x/lint/golint
+type shadow  2>/dev/null >/dev/null  || go get -u golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow
+type staticcheck 2>/dev/null >/dev/null || go get -u honnef.co/go/tools/cmd/staticcheck
 
 
 # Run the static-check tool.
