@@ -121,7 +121,7 @@ A simple HTTP-server.  Allows serving to localhost, or to the local LAN.
 
 ## http-get
 
-Very much "curl-lite", allows you to fetch the contents of a remote URL.  SSL errors, etc, are handled, but there are zero configuration options.
+Very much "curl-lite", allows you to fetch the contents of a remote URL.  SSL errors, etc, are handled, but only minimal options are supported.
 
 
 ## install
