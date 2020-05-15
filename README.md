@@ -41,7 +41,7 @@ There is a trivial bash-completion script included in the repository, which you 
 
 This application is built, and distributed, as a single-binary named`sysbox`, which implements a number of sub-commands.
 
-You can either run the tools individually:
+You can either run the tools individually, taking advantage of the [bash completion](#bash-completion) support to complete the subcommands and their arguments:
 
     $ sysbox foo ..
     $ sysbox bar ..
@@ -62,7 +62,7 @@ This process of creating symlinks can be automated via the use of the `sysbox in
 
 The tools in this repository started out as being simple ports of the tools in my [previous repository](https://github.com/skx/sysadmin-util), however I've now started to expand them and fold in things I've used/created in the past.
 
-You can view a brief list of the commands via:
+You can view a summary of the available subcommands via:
 
     $ sysbox help
 
@@ -87,9 +87,9 @@ The chronic command is ideally suited to wrap cronjobs, it runs the command you 
 
 ## collapse
 
-This is a simple tool which will read STDIN, and output the content without any extra whitespace:
+This is a simple tool which will read STDIN, and output the content without any extra white-space:
 
-* Leading/Trailing whitespace will be removed from every line.
+* Leading/Trailing white-space will be removed from every line.
 * Empty lines will be skipped entirely.
 
 
@@ -113,7 +113,7 @@ For example:
 $ ps -ef | sysbox exec-stdin echo field1:{1} field2:{2} line:{}
 ```
 
-See the usage-information for more (`sysbox help exec-stdin`).
+See the usage-information for more details (`sysbox help exec-stdin`), but consider this a simple union of `awk` and `xargs`.
 
 
 ## fingerd
@@ -126,7 +126,6 @@ A trivial finger-server.
 A simple HTTP-server.  Allows serving to localhost, or to the local LAN.
 
 
-
 ## http-get
 
 Very much "curl-lite", allows you to fetch the contents of a remote URL.  SSL errors, etc, are handled, but only minimal options are supported.
@@ -134,7 +133,7 @@ Very much "curl-lite", allows you to fetch the contents of a remote URL.  SSL er
 
 ## install
 
-This command allows you to install symlinks to the binary, for ease of use:
+This command allows you to install symlinks to the sysbox-binary, for ease of use:
 
 ```
 $ sysbox install -binary=$(pwd)/sysbox -directory=~/bin | sh
