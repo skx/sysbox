@@ -42,9 +42,7 @@ To show only directory entries:
 
    $ sysbox tree -d /opt
 
-If there were any errors encounted the return-code will be 1, otherwise 0.
-
-`
+If there were any errors encountered then the return-code will be 1, otherwise 0.`
 }
 
 // Execute is invoked if the user specifies `tree` as the subcommand.
