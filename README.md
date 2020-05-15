@@ -5,6 +5,7 @@
 
 * [SysBox](#sysbox)
   * [Installation](#installation)
+  * [Bash Completion](#bash-completion)
 * [Overview](#overview)
 * [Tools](#tools)
 * [Future Additions?](#future-additions)
@@ -26,6 +27,13 @@ $ go get github.com/skx/sysbox
 ```
 
 If you prefer you can find binary releases upon our [download page](https://github.com/skx/sysbox/releases).
+
+
+## Bash Completion
+
+There is a trivial bash-completion script included in the repository, which you might wish to source:
+
+* [bash.completion](bash.completion)
 
 
 

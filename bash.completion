@@ -1,0 +1,24 @@
+
+_sysbox()
+{
+    local cur
+    COMPREPLY=()
+
+    # Variable to hold the current word
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    # first word then complete against the sub-commands
+    if [ $COMP_CWORD = 1 ]; then
+
+        local subs=$(sysbox commands)
+        COMPREPLY=($(compgen -W "${subs}" $cur))
+    else
+
+        # Otherwise complete from the flags available to the specified
+        # sub-command.
+        local flags="$(sysbox help ${COMP_WORDS[1]} | awk '{print $1}' | grep -- -)"
+        COMPREPLY=($(compgen -W "${flags}" -- "$cur"))
+   fi
+}
+
+complete -F _sysbox sysbox
