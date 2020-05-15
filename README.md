@@ -80,6 +80,13 @@ A simple calculator, which understands floating points, which `expr` never does.
 Portions of this code from [Porting Eval to Go](https://thorstenball.com/blog/2016/11/16/putting-eval-in-go/), by Thorsten Ball.  (I expanded it to support parenthesis, for precedence, and the use of floating-point numbers rather than integers.)
 
 
+## choose-file
+
+This subcommand presents a console-based UI to select a file.  The file selected will be displayed upon STDOUT.  The list may be filtered via an input-field.  (Use TAB to switch focus between the filter-field and list.)
+
+Useful for launching videos, etc.  (`xine "$(sysbox choose-file ~/Videos)"`)
+
+
 ## chronic
 
 The chronic command is ideally suited to wrap cronjobs, it runs the command you specify as a child process and hides the output produced __unless__ that process exits with a non-zero exit-code.
