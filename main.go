@@ -1,15 +1,30 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/skx/subcommands"
 )
 
 //
+// Recovery is good
+//
+func recoverPanic() {
+	if r := recover(); r != nil {
+		fmt.Printf("recovered from panic while running %v\n%s\n", os.Args, r)
+	}
+}
+
+//
 // Register the subcommands, and run the one the user chose.
 //
 func main() {
+
+	//
+	// Catch errors
+	//
+	defer recoverPanic()
 
 	//
 	// Register each of our subcommands.
