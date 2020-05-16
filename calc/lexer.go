@@ -1,0 +1,190 @@
+package calc
+
+import "strconv"
+
+// pre-defined token-types
+const (
+	// Basic token-types
+	EOF    = "EOF"
+	IDENT  = "IDENT"
+	NUMBER = "NUMBER"
+	ERROR  = "ERROR"
+
+	// Assignment-magic
+	LET    = "LET"
+	ASSIGN = "="
+
+	// Operations
+	PLUS     = "+"
+	MINUS    = "-"
+	MULTIPLY = "*"
+	DIVIDE   = "/"
+)
+
+// Token holds a lexed token from our input, as a string.
+type Token struct {
+
+	// The type of the token.
+	Type string
+
+	// The value of the token.
+	Value interface{}
+}
+
+// Lexer holds our lexer state
+type Lexer struct {
+
+	// input is the string we're lexing
+	input string
+
+	// position is the current position within the input-string
+	position int
+}
+
+// NewLexer creates a new lexer, for the given input.
+func NewLexer(input string) *Lexer {
+	return &Lexer{input: input}
+}
+
+// Next returns the next token from our input stream.
+//
+// This is pretty naive, but it should work and recognize "numbers",
+// "identifiers", and our supported operators.
+func (l *Lexer) Next() *Token {
+
+	// Known-token-types
+	known := make(map[string]string)
+	known["*"] = MULTIPLY
+	known["+"] = PLUS
+	known["-"] = MINUS
+	known["/"] = DIVIDE
+	known["="] = ASSIGN
+
+	// Loop until we've exhausted our input.
+	for l.position < len(l.input) {
+
+		// Get the next character
+		char := string(l.input[l.position])
+
+		// Is this a known character/token?
+		t, ok := known[char]
+		if ok {
+			// skip the character, and return the token
+			l.position++
+			return &Token{Value: char, Type: t}
+		}
+
+		// If we reach here it is something more complex.
+		switch char {
+
+		// Skip whitespace
+		case " ", "\t", "\n", ";":
+			l.position++
+			continue
+		case "=":
+			l.position++
+			return &Token{Value: "=", Type: ASSIGN}
+
+			// Is it a digit?
+		case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".":
+			//
+			// Loop for more digits
+			//
+
+			// Starting offset of our number
+			start := l.position
+
+			// ending offset of our number.
+			end := l.position
+
+			// keep walking forward, minding we don't wander
+			// out of our input.
+			for end < len(l.input) {
+				c := string(l.input[end])
+
+				if c != "0" &&
+					c != "1" &&
+					c != "2" &&
+					c != "3" &&
+					c != "4" &&
+					c != "5" &&
+					c != "6" &&
+					c != "7" &&
+					c != "8" &&
+					c != "9" &&
+					c != "." {
+					break
+				}
+				end++
+			}
+
+			l.position = end
+
+			// Here we have the number
+			token := l.input[start:end]
+
+			// Convert to float64
+			number, err := strconv.ParseFloat(token, 64)
+			if err != nil {
+				return &Token{Value: err.Error(), Type: ERROR}
+			}
+
+			return &Token{Value: number, Type: NUMBER}
+
+		default:
+			//
+			// We'll assume we have an identifier
+			//
+
+			// Starting offset of our ident
+			start := l.position
+
+			// ending offset of our ident.
+			end := l.position
+
+			// keep walking forward, minding we don't wander
+			// out of our input.
+			for end < len(l.input) {
+
+				c := string(l.input[end])
+
+				if c == " " ||
+					c == "\t" ||
+					c == "\n " ||
+					c == "1" ||
+					c == "2" ||
+					c == "3" ||
+					c == "4" ||
+					c == "5" ||
+					c == "6" ||
+					c == "7" ||
+					c == "8" ||
+					c == "9" ||
+					c == "." ||
+					c == "+" ||
+					c == "-" ||
+					c == "/" ||
+					c == "*" ||
+					c == ";" ||
+					c == "=" {
+					break
+				}
+				end++
+			}
+
+			l.position = end
+			token := l.input[start:end]
+
+			// We only have a single keyword, LET, handle it here.
+			if token == "let" {
+				return &Token{Value: "let", Type: LET}
+			}
+
+			// If it wasn't `let` it was an identifier.
+			return &Token{Value: token, Type: IDENT}
+		}
+
+	}
+
+	return &Token{Value: "", Type: EOF}
+}

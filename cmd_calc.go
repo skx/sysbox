@@ -3,15 +3,12 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"go/ast"
-	"go/parser"
-	"go/token"
 	"log"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/skx/subcommands"
+	"github.com/skx/sysbox/calc"
 )
 
 // Structure for our options and state.
@@ -38,97 +35,21 @@ Example:
 
 Note here we can join arguments, or accept a quoted string.  The arguments
 must be quoted if you use '*' because otherwise the shell's globbing would
-cause surprises.`
-}
+cause surprises.
 
-// eval evaluates the given AST expression.
-func (c *calcCommand) eval(exp ast.Expr) float64 {
-	switch exp := exp.(type) {
+Repl:
 
-	// ! and -
-	case *ast.BinaryExpr:
-		return c.evalBinaryExpr(exp)
+If you execute this command with no arguments you'll be dropped into a REPL
+environment.  This environment is almost 100% identical to the non-interactive
+use, with the exception that you can define variables:
 
-	// numbers (+ strings, etc)
-	case *ast.BasicLit:
-		switch exp.Kind {
-		case token.INT, token.FLOAT:
-			i, _ := strconv.ParseFloat(exp.Value, 64)
-			return i
-		default:
-			fmt.Printf("unknown literal type: %v %T\n", exp, exp)
-			os.Exit(1)
-		}
-
-	// parenthesis (e.g. "(1 + 2 ) * 3".)
-	case *ast.ParenExpr:
-		return (c.eval(exp.X))
-
-	default:
-		fmt.Printf("unknown ast.Node: %v %T\n", exp, exp)
-		os.Exit(1)
-
-	}
-
-	return 0
-}
-
-// evalBinaryExpr evaluate a binary operation (which means there are
-// two arguments).
-func (c *calcCommand) evalBinaryExpr(exp *ast.BinaryExpr) float64 {
-	left := c.eval(exp.X)
-	right := c.eval(exp.Y)
-
-	switch exp.Op {
-	case token.ADD:
-		return left + right
-	case token.SUB:
-		return left - right
-	case token.MUL:
-		return left * right
-	case token.QUO:
-		return left / right
-	case token.REM:
-		// modulus
-		return float64(int(left) % int(right))
-	}
-
-	fmt.Printf("Unknown operator '%v'\n", exp.Op)
-	os.Exit(1)
-	return 0
-}
-
-// Evaluate processes the given string.
-func (c *calcCommand) Evaluate(input string) error {
-
-	//
-	// Parse to AST
-	//
-	exp, err := parser.ParseExpr(input)
-	if err != nil {
-		return fmt.Errorf("failed to parse '%s': %s", input, err)
-	}
-
-	//
-	// Evaluate
-	//
-	res := c.eval(exp)
-
-	//
-	// If the result is an int show that, to avoid
-	// needless ".0000" suffix.
-	//
-	if res == float64(int(res)) {
-		fmt.Printf("%d\n", int(res))
-	} else {
-
-		//
-		// OK show the floating-point result.
-		//
-		fmt.Printf("%f\n", res)
-	}
-
-	return nil
+   $ sysbox calc
+   calc> let a = 3
+   calc> a * 3
+   9
+   calc> a / 9
+   0.3333
+`
 }
 
 // Execute is invoked if the user specifies `calc` as the subcommand.
@@ -145,16 +66,49 @@ func (c *calcCommand) Execute(args []string) int {
 	}
 
 	//
+	// Create a new evaluator
+	//
+	cal := calc.New()
+
+	//
 	// If we have no arguments then we're in the repl.
 	//
 	// Otherwise we process the input.
 	//
 	if len(input) > 0 {
-		err := c.Evaluate(input)
-		if err != nil {
-			fmt.Printf("ERROR: %s\n", err.Error())
+
+		//
+		// Load the script
+		//
+		cal.Load(input)
+
+		//
+		// Run it.
+		//
+		out := cal.Run()
+
+		//
+		// Check for errors
+		//
+		if out.Type == calc.ERROR {
+			fmt.Printf("error: %s\n", out.Value.(string))
 			return 1
 		}
+		if out.Type != calc.NUMBER {
+			fmt.Printf("unexpected output %v\n", out)
+			return 1
+		}
+
+		//
+		// Show the result; int-preferred, if possible
+		//
+		result := out.Value.(float64)
+		if float64(int(result)) == result {
+			fmt.Printf("%d\n", int(result))
+		} else {
+			fmt.Printf("%f\n", result)
+		}
+
 		return 0
 	}
 
@@ -189,15 +143,38 @@ func (c *calcCommand) Execute(args []string) int {
 		if input != "" {
 
 			//
-			// Evaluate it
+			// Load the script
 			//
-			err := c.Evaluate(input)
-			if err != nil {
-				fmt.Printf("ERROR: %s\n", err.Error())
+			cal.Load(input)
+
+			//
+			// Run it.
+			//
+			out := cal.Run()
+
+			//
+			// Check for errors
+			//
+			if out.Type == calc.ERROR {
+				fmt.Printf("error: %s\n", out.Value.(string))
 				return 1
 			}
-		}
+			if out.Type != calc.NUMBER {
+				fmt.Printf("unexpected output %v\n", out)
+				return 1
+			}
 
+			//
+			// Show the result; int-preferred, if possible
+			//
+			result := out.Value.(float64)
+			if float64(int(result)) == result {
+				fmt.Printf("%d\n", int(result))
+			} else {
+				fmt.Printf("%f\n", result)
+			}
+
+		}
 		fmt.Printf("calc> ")
 	}
 
