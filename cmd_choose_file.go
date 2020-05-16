@@ -79,6 +79,8 @@ func (cf *chooseFileCommand) Execute(args []string) int {
 	//
 	list := tview.NewList()
 	list.ShowSecondaryText(false)
+	list.SetWrapAround(false)
+
 	for _, entry := range cf.files {
 		list.AddItem(entry, "", ' ', nil)
 	}
@@ -145,26 +147,32 @@ func (cf *chooseFileCommand) Execute(args []string) int {
 	})
 
 	//
+	// Help text
+	//
+	help := tview.NewBox().SetBorder(true).SetTitle("TAB to switch focus, ENTER to select, ESC to cancel, arrows/etc to move")
+
+	//
 	// Create a layout grid, add the filter-box and the list.
 	//
 	grid := tview.NewFlex().SetFullScreen(true).SetDirection(tview.FlexRow)
-	grid.AddItem(inputField, 1, 0, false)
-	grid.AddItem(list, 0, 1, true)
+	grid.AddItem(inputField, 1, 0, true)
+	grid.AddItem(list, 0, 1, false)
+	grid.AddItem(help, 2, 1, false)
 
 	//
 	// Global keyboard handler, use "TAB" to switch focus.
 	//
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		switch event.Rune() {
-		case '\t':
+		switch event.Key() {
+		case tcell.KeyTab, tcell.KeyBacktab:
 			if list.HasFocus() {
 				app.SetFocus(inputField)
 			} else {
 				app.SetFocus(list)
 			}
 			return nil
-		}
-		if event.Key() == tcell.KeyEscape {
+
+		case tcell.KeyEscape:
 			app.Stop()
 		}
 		return event
