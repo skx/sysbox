@@ -84,7 +84,7 @@ Portions of this code from [Porting Eval to Go](https://thorstenball.com/blog/20
 
 This subcommand presents a console-based UI to select a file.  The file selected will be displayed upon STDOUT.  The list may be filtered via an input-field.  (Use TAB to switch focus between the filter-field and list.)
 
-Useful for launching videos, etc.  (`xine "$(sysbox choose-file ~/Videos)"`)
+Useful for launching videos, etc.  (`sysbox choose-file -execute="xine {}" ~/Videos`)
 
 
 ## chronic
