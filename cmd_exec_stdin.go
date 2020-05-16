@@ -34,7 +34,7 @@ func (es *execSTDINCommand) Arguments(f *flag.FlagSet) {
 
 // Info returns the name of this subcommand.
 func (es *execSTDINCommand) Info() (string, string) {
-	return "exec-stdin", `Execute a command for each line of STDIN
+	return "exec-stdin", `Execute a command for each line of STDIN.
 
 Details:
 

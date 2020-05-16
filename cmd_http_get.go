@@ -27,7 +27,7 @@ func (hg *httpGetCommand) Arguments(f *flag.FlagSet) {
 
 // Info returns the name of this subcommand.
 func (hg *httpGetCommand) Info() (string, string) {
-	return "http-get", `Fetch a remote URL
+	return "http-get", `Download and display the contents of a remote URL.
 
 Details:
 
