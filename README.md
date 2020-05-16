@@ -75,10 +75,22 @@ Examples are included where useful.
 
 ## calc
 
-A simple calculator, which understands floating points, which `expr` never does.
+A simple calculator, which understands floating point-operations, unlinke `expr`.
 
-Portions of this code from [Porting Eval to Go](https://thorstenball.com/blog/2016/11/16/putting-eval-in-go/), by Thorsten Ball.  (I expanded it to support parenthesis, for precedence, and the use of floating-point numbers rather than integers.)
+The calculator supports either execution of sums via via the command-line, or as an interactive REPL environment:
 
+```
+$ sysbox calc 3.1 + 2.7
+5.800000
+
+$ ./sysbox calc
+calc> let a = 1/3
+0.333333
+calc> a * 9
+3
+calc> exit
+$
+```
 
 ## choose-file
 
