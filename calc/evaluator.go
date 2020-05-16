@@ -61,30 +61,30 @@ func (e *Evaluator) Load(input string) {
 		e.tokens = append(e.tokens, tok)
 	}
 
-	// Add an extra pair of EOF tokens so that NextToken
+	// Add an extra pair of EOF tokens so that nextToken
 	// can always be called
 	e.tokens = append(e.tokens, &Token{Value: "EOF", Type: EOF})
 	e.tokens = append(e.tokens, &Token{Value: "EOF", Type: EOF})
 	e.token = 0
 }
 
-// NextToken returns the next token from our input.
+// nextToken returns the next token from our input.
 //
 // When Load is called the input-expression is broken
 // down into a series of Tokens, and this function
 // advances to the next token, returning it.
-func (e *Evaluator) NextToken() *Token {
+func (e *Evaluator) nextToken() *Token {
 	tok := e.tokens[e.token]
 	e.token++
 	return tok
 }
 
-// PeekToken returns the next pending token in our stream.
+// peekToken returns the next pending token in our stream.
 //
 // NOTE it is always possible to peek at the next token,
 // because we deliberately add an extra/spare EOF token
 // in our constructor.
-func (e *Evaluator) PeekToken() *Token {
+func (e *Evaluator) peekToken() *Token {
 	tok := e.tokens[e.token]
 	return tok
 }
@@ -99,10 +99,10 @@ func (e *Evaluator) term() *Token {
 		return f1
 	}
 
-	op := e.PeekToken()
+	op := e.peekToken()
 	for op.Type == MULTIPLY || op.Type == DIVIDE {
 
-		op = e.NextToken()
+		op = e.nextToken()
 
 		f2 := e.factor()
 
@@ -129,7 +129,7 @@ func (e *Evaluator) term() *Token {
 			}
 		}
 
-		op = e.PeekToken()
+		op = e.peekToken()
 	}
 
 	return f1
@@ -144,13 +144,13 @@ func (e *Evaluator) expr() *Token {
 	if t1.Type == LET {
 
 		// Get the identifier.
-		ident := e.NextToken()
+		ident := e.nextToken()
 		if ident.Type != IDENT {
 			return &Token{Type: ERROR, Value: fmt.Sprintf("%v is not an identifier", ident)}
 		}
 
 		// Skip the assignment statement
-		assign := e.NextToken()
+		assign := e.nextToken()
 		if assign.Type != ASSIGN {
 			return &Token{Type: ERROR, Value: fmt.Sprintf("%v is not an assignment statement", ident)}
 		}
@@ -165,10 +165,10 @@ func (e *Evaluator) expr() *Token {
 		return result
 	}
 
-	tok := e.PeekToken()
+	tok := e.peekToken()
 	for tok.Type == PLUS || tok.Type == MINUS {
 
-		tok = e.NextToken()
+		tok = e.nextToken()
 		t2 := e.term()
 
 		if t1.Type != NUMBER {
@@ -185,7 +185,7 @@ func (e *Evaluator) expr() *Token {
 			t1.Value = t1.Value.(float64) - t2.Value.(float64)
 		}
 
-		tok = e.PeekToken()
+		tok = e.peekToken()
 	}
 
 	return t1
@@ -193,7 +193,7 @@ func (e *Evaluator) expr() *Token {
 
 // factor() - return a token
 func (e *Evaluator) factor() *Token {
-	tok := e.NextToken()
+	tok := e.nextToken()
 
 	switch tok.Type {
 	case EOF:
@@ -219,12 +219,12 @@ func (e *Evaluator) factor() *Token {
 		res := e.expr()
 
 		// next token should be ")"
-		if e.PeekToken().Type != RPAREN {
-			return &Token{Type: ERROR, Value: fmt.Sprintf("expected ')' after expression found %v", e.PeekToken())}
+		if e.peekToken().Type != RPAREN {
+			return &Token{Type: ERROR, Value: fmt.Sprintf("expected ')' after expression found %v", e.peekToken())}
 		}
 
 		// skip that ")"
-		e.NextToken()
+		e.nextToken()
 
 		return res
 	}
@@ -242,7 +242,7 @@ func (e *Evaluator) Run() *Token {
 	var result *Token
 
 	// Process each statement
-	for e.PeekToken().Type != EOF {
+	for e.peekToken().Type != EOF {
 
 		// Get the result
 		result = e.expr()
