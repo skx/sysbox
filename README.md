@@ -31,10 +31,14 @@ If you prefer you can find binary releases upon our [download page](https://gith
 
 ## Bash Completion
 
-There is a trivial bash-completion script included in the repository, which you might wish to source:
+The [subcommand library](https://github.com/skx/subcommands) this application uses has integrated support for the generation of bash completion scripts.
 
-* [bash.completion](bash.completion)
+To enable this add the following to your bash configuration-file:
 
+```
+source <(sysbox bash-completion)
+
+```
 
 
 # Overview
