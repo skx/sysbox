@@ -5,20 +5,25 @@ import (
 	"math"
 )
 
-// Evaluator holds the parser-state
+// Evaluator holds the state of the evaluation-object.
 type Evaluator struct {
 
-	// tokens holds the series of tokens which our lexer produced from our input.
+	// tokens holds the series of tokens which our
+	// lexer produced from our input.
 	tokens []*Token
 
 	// Current position within the array of tokens.
 	token int
 
-	// holder for variables
+	// holder for any variables the user has defined.
 	variables map[string]float64
 }
 
 // New creates a new evaluation object.
+//
+// The evaluation object starts out as being empty,
+// but you can call Load to load an expression and
+// then Run to execute it.
 func New() *Evaluator {
 
 	// Create the new object.
@@ -37,7 +42,7 @@ func New() *Evaluator {
 // Load is used to load a program into the evaluator.
 //
 // Note that the existing variables will maintain their state
-// if it isn't reset.
+// if not reset explicitly.
 func (e *Evaluator) Load(input string) {
 
 	// Create a lexer for splitting the program
@@ -63,16 +68,20 @@ func (e *Evaluator) Load(input string) {
 	e.token = 0
 }
 
-// NextToken returns the next token from our input
+// NextToken returns the next token from our input.
+//
+// When Load is called the input-expression is broken
+// down into a series of Tokens, and this function
+// advances to the next token, returning it.
 func (e *Evaluator) NextToken() *Token {
 	tok := e.tokens[e.token]
 	e.token++
 	return tok
 }
 
-// PeekToken returns the next token in our stream
+// PeekToken returns the next pending token in our stream.
 //
-// Note it is always possible to peek at the next token,
+// NOTE it is always possible to peek at the next token,
 // because we deliberately add an extra/spare EOF token
 // in our constructor.
 func (e *Evaluator) PeekToken() *Token {
@@ -226,7 +235,8 @@ func (e *Evaluator) factor() *Token {
 // Run launches the program we've loaded.
 //
 // If multiple statements are available each are executed in turn,
-// and the result of the last one returned
+// and the result of the last one returned.  However errors will
+// cause early-termination.
 func (e *Evaluator) Run() *Token {
 
 	var result *Token
@@ -241,7 +251,10 @@ func (e *Evaluator) Run() *Token {
 		if result.Type == ERROR {
 			return result
 		}
+
+		// Otherwise loop again.
 	}
 
+	// All done.
 	return result
 }

@@ -1,10 +1,10 @@
 // Package calc contains a simple calculator, which supports the
 // most basic operations:
 //
-// - +
-// - -
-// - *
-// - /
+//    +
+//    -
+//    *
+//    /
 //
 // In addition to the basic operations it is also possible to
 // declare variables via `let name = xxx`, for example:

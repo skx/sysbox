@@ -2,7 +2,8 @@ package calc
 
 import "strconv"
 
-// pre-defined token-types
+// These constants are used to return the type of
+// token which has been lexed.
 const (
 	// Basic token-types
 	EOF    = "EOF"
@@ -25,17 +26,21 @@ const (
 	DIVIDE   = "/"
 )
 
-// Token holds a lexed token from our input, as a string.
+// Token holds a lexed token from our input.
 type Token struct {
 
 	// The type of the token.
 	Type string
 
 	// The value of the token.
+	//
+	// If the type of the token is NUMBER then this
+	// will be stored as a float64.  Otherwise the
+	// value will be a string.
 	Value interface{}
 }
 
-// Lexer holds our lexer state
+// Lexer holds our lexer state.
 type Lexer struct {
 
 	// input is the string we're lexing
@@ -52,8 +57,9 @@ func NewLexer(input string) *Lexer {
 
 // Next returns the next token from our input stream.
 //
-// This is pretty naive, but it should work and recognize "numbers",
-// "identifiers", and our supported operators.
+// This is pretty naive lexer, however it is sufficient to
+// recognize numbers, identifiers, and our small set of
+// operators.
 func (l *Lexer) Next() *Token {
 
 	// Known-token-types
