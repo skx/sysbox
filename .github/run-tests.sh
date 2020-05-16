@@ -29,3 +29,6 @@ echo "Completed linter .."
 echo "Launching shadowed-variable check .."
 go vet -vettool=$(which shadow) ./...
 echo "Completed shadowed-variable check .."
+
+# Run any test-scripts we have (i.e. calc/)
+go test ./...
