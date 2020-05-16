@@ -14,6 +14,10 @@ const (
 	LET    = "LET"
 	ASSIGN = "="
 
+	// Paren
+	LPAREN = "("
+	RPAREN = ")"
+
 	// Operations
 	PLUS     = "+"
 	MINUS    = "-"
@@ -59,6 +63,8 @@ func (l *Lexer) Next() *Token {
 	known["-"] = MINUS
 	known["/"] = DIVIDE
 	known["="] = ASSIGN
+	known["("] = LPAREN
+	known[")"] = RPAREN
 
 	// Loop until we've exhausted our input.
 	for l.position < len(l.input) {
@@ -81,9 +87,6 @@ func (l *Lexer) Next() *Token {
 		case " ", "\t", "\n", ";":
 			l.position++
 			continue
-		case "=":
-			l.position++
-			return &Token{Value: "=", Type: ASSIGN}
 
 			// Is it a digit?
 		case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".":

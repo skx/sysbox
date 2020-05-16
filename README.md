@@ -85,7 +85,7 @@ $ sysbox calc 3.1 + 2.7
 
 $ ./sysbox calc
 calc> let a = 1/3
-   0.333333
+0.333333
 calc> a * 9
 3
 calc> exit

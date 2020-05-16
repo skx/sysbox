@@ -199,9 +199,25 @@ func (e *Evaluator) factor() *Token {
 		return &Token{Type: ERROR, Value: fmt.Sprintf("undefined variable: %s", tok.Value.(string))}
 	case LET:
 		return tok
+	case LPAREN:
+		//
+		// We don't need to skip past the `(` here
+		// because the `expr` call will do that
+		// to find its arguments
+		//
 
-		// TODO: Handle LPAREN here
-		// Until RPAREN
+		// evaluate the expression
+		res := e.expr()
+
+		// next token should be ")"
+		if e.PeekToken().Type != RPAREN {
+			return &Token{Type: ERROR, Value: fmt.Sprintf("expected ')' after expression found %v", e.PeekToken())}
+		}
+
+		// skip that ")"
+		e.NextToken()
+
+		return res
 	}
 
 	return &Token{Type: ERROR, Value: fmt.Sprintf("Unexpected token inside factor() - %v\n", tok)}
