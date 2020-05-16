@@ -77,6 +77,12 @@ func (t *treeCommand) Execute(args []string) int {
 	filepath.Walk(start,
 		func(path string, info os.FileInfo, err error) error {
 
+			// Null info?  That probably means that the
+			// destination we're trying to walk doesn't exist.
+			if info == nil {
+				return nil
+			}
+
 			entry := &Entry{name: path}
 
 			if err == nil {
@@ -90,10 +96,6 @@ func (t *treeCommand) Execute(args []string) int {
 			entries = append(entries, entry)
 			return nil
 		})
-	//	if err != nil {
-	//		fmt.Printf("error walking . : %s\n", err.Error())
-	//		return 1
-	//	}
 
 	//
 	// Did we hit an error?

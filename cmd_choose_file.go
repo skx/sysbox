@@ -64,8 +64,16 @@ func (cf *chooseFileCommand) Execute(args []string) int {
 	//
 	// Find files
 	//
-	filepath.Walk(dir,
+	err := filepath.Walk(dir,
 		func(path string, info os.FileInfo, err error) error {
+
+			// Null info?  That probably means that the
+			// destination we're trying to walk doesn't exist.
+			if info == nil {
+				return nil
+			}
+
+			// We'll add anything that isn't a directory
 			if !info.IsDir() {
 				if !strings.Contains(path, "/.") && !strings.HasPrefix(path, ".") {
 					cf.files = append(cf.files, path)
@@ -73,6 +81,15 @@ func (cf *chooseFileCommand) Execute(args []string) int {
 			}
 			return nil
 		})
+
+	if err != nil {
+		fmt.Printf("error walking %s: %s\n", dir, err.Error())
+		return 1
+	}
+	if len(cf.files) < 1 {
+		fmt.Printf("Failed to find any files beneath %s\n", dir)
+		return 1
+	}
 
 	//
 	// Create the console-GUI application.

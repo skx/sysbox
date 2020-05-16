@@ -16,6 +16,12 @@ func FindFiles(path string, suffixes []string) ([]string, error) {
 
 	err := filepath.Walk(path, func(path string, f os.FileInfo, err error) error {
 
+		// Null info?  That probably means that the
+		// destination we're trying to walk doesn't exist.
+		if f == nil {
+			return nil
+		}
+
 		if !f.IsDir() {
 			for _, suffix := range suffixes {
 				if strings.HasSuffix(path, suffix) {
