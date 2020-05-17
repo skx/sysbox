@@ -114,7 +114,9 @@ The first form is preferred, because if the selection is canceled nothing happen
 
 Almost identical to `choose-file`, but instead of allowing the user to choose from a filename it allows choosing from the contents read on STDIN.  For example you might allow choosing a directory:
 
-   $ find ~Repos -type d | sysbox choose-stdin -execute="firefox {}"
+```
+$ find ~/Repos -type d | sysbox choose-stdin -execute="firefox {}"
+```
 
 
 ## chronic
