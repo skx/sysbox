@@ -31,6 +31,7 @@ func main() {
 	//
 	subcommands.Register(&calcCommand{})
 	subcommands.Register(&chooseFileCommand{})
+	subcommands.Register(&chooseSTDINCommand{})
 	subcommands.Register(&chronicCommand{})
 	subcommands.Register(&collapseCommand{})
 	subcommands.Register(&envTemplateCommand{})

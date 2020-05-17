@@ -110,6 +110,13 @@ Useful for launching videos, emulators, etc:
 The first form is preferred, because if the selection is canceled nothing happens.  In the second-case `xine` would be launched with no argument.
 
 
+## choose-stdin
+
+Almost identical to `choose-file`, but instead of allowing the user to choose from a filename it allows choosing from the contents read on STDIN.  For example you might allow choosing a directory:
+
+   $ find ~Repos -type d | sysbox choose-stdin -execute="firefox {}"
+
+
 ## chronic
 
 The chronic command is ideally suited to wrap cronjobs, it runs the command you specify as a child process and hides the output produced __unless__ that process exits with a non-zero exit-code.
