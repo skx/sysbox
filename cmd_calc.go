@@ -45,6 +45,7 @@ use, with the exception that you can define variables:
 
    $ sysbox calc
    calc> let a = 3
+   3
    calc> a * 3
    9
    calc> a / 9

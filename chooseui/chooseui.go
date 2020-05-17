@@ -13,7 +13,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-// Structure for our options and state.
+// ChooseUI is the structure for holding our state.
 type ChooseUI struct {
 
 	// The items the user will choose from.

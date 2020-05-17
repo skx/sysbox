@@ -42,10 +42,11 @@ Optionally you can press TAB to filter the list via an input field.
 
 Uses:
 
-This is ideal for choosing videos, roms, etc.  For example launch the
-given video file:
+This is ideal for choosing videos, roms, etc.  For example launch a
+video file, interactively:
 
    $ xine "$(sysbox choose-file ~/Videos)"
+   $ sysbox choose-file -execute="xine {}" ~/Videos
 
 See also 'sysbox help choose-stdin'.`
 }

@@ -25,6 +25,7 @@ func (cs *chooseSTDINCommand) Arguments(f *flag.FlagSet) {
 	f.StringVar(&cs.exec, "execute", "", "Command to execute once a selection has been made")
 }
 
+// Info returns the name of this subcommand.
 func (cs *chooseSTDINCommand) Info() (string, string) {
 	return "choose-stdin", `Choose an item from STDIN, interactively
 
