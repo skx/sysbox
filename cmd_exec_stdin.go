@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"regexp"
-	"strconv"
 	"strings"
+
+	"github.com/skx/sysbox/templatedcmd"
 )
 
 // Structure for our options and state.
@@ -38,7 +38,7 @@ func (es *execSTDINCommand) Info() (string, string) {
 
 Details:
 
-This command reads lines from STDIN, and executes the named command with
+This command reads lines from STDIN, and executes the specified command with
 that line as input.
 
 The line read from STDIN will be available as '{}' and each space-separated
@@ -69,10 +69,10 @@ If you prefer you can split fields on specific characters, which is useful
 for operating upon CSV files, or in case you wish to split '/etc/passwd' on
 ':' to work on usernames:
 
-  $ sysbox exec-stdin -split=: groups {1}
+  $ cat /etc/passwd | sysbox exec-stdin -split=: groups {1}
 
 The only other flag is '-verbose', to show the command that would be
-executed and 'dry-run' to avoid running anything.`
+executed and '-dry-run' to avoid running anything.`
 }
 
 // Execute is invoked if the user specifies `exec-stdin` as the subcommand.
@@ -110,84 +110,15 @@ func (es *execSTDINCommand) Execute(args []string) int {
 	for err == nil && line != "" {
 
 		//
-		// Remove any leading/trailing whitespace
+		// Create the command to execute
 		//
-		line = strings.TrimSpace(line)
-
-		//
-		// We're now going to build up the command
-		// to execute.
-		//
-		//   {} -> The complete line read from STDIN
-		//
-		//   {1} -> The first field of the input.
-		//
-		//   {2} -> The second field of the input.
-		//
-		//   {N} -> The Nth field of the input.
-		//
-		fields := strings.Fields(line)
-
-		//
-		// Different split character?
-		//
-		if es.split != "" {
-			fields = strings.Split(line, es.split)
-		}
-
-		//
-		// Copy the string
-		//
-		sh := cmd
-
-		//
-		// Look for {NNNN}
-		//
-		reg := regexp.MustCompile("({[0-9]+})")
-		matches := reg.FindAllStringSubmatch(sh, -1)
-
-		//
-		// For each match, perform the expansion
-		//
-		for _, v := range matches {
-
-			//
-			// Copy the match and remove the {}
-			//
-			// So we just have "1", "3", etc.
-			//
-			match := v[1]
-			match = strings.ReplaceAll(match, "{", "")
-			match = strings.ReplaceAll(match, "}", "")
-
-			//
-			// Convert the string to a number.
-			//
-			num, error := strconv.Atoi(match)
-			if error != nil {
-				fmt.Printf("failed to convert %s to number: %s", match, err.Error())
-				return 1
-			}
-
-			//
-			// If the field matches then we can replace it
-			//
-			if num >= 1 && num <= len(fields) {
-				sh = strings.ReplaceAll(sh, v[1], fields[num-1])
-			}
-
-		}
-
-		//
-		// Replace "{}" with the complete input.
-		//
-		sh = strings.ReplaceAll(sh, "{}", line)
+		run := templatedcmd.Expand(cmd, line, es.split)
 
 		//
 		// Show command if being verbose
 		//
 		if es.verbose || es.dryRun {
-			fmt.Printf("%s\n", sh)
+			fmt.Printf("%s\n", strings.Join(run, " "))
 		}
 
 		//
@@ -195,11 +126,10 @@ func (es *execSTDINCommand) Execute(args []string) int {
 		//
 		if !es.dryRun {
 
-			pieces := strings.Fields(sh)
-			cmd := exec.Command(pieces[0], pieces[1:]...)
+			cmd := exec.Command(run[0], run[1:]...)
 			out, errr := cmd.CombinedOutput()
 			if errr != nil {
-				fmt.Printf("Error running '%s': %s\n", sh, errr.Error())
+				fmt.Printf("Error running '%v': %s\n", run, errr.Error())
 				return 1
 			}
 

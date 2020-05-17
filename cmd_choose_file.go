@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/skx/sysbox/chooseui"
+	"github.com/skx/sysbox/templatedcmd"
 )
 
 // Structure for our options and state.
@@ -114,28 +115,15 @@ func (cf *chooseFileCommand) Execute(args []string) int {
 		//
 		// Split into command and arguments
 		//
-		pieces := strings.Fields(cf.exec)
-
-		//
-		// Expand the args - this is horrid
-		//
-		// Is a hack to ensure that things work if we
-		// have a selected filename with spaces inside it.
-		//
-		toRun := []string{}
-
-		for _, piece := range pieces {
-			piece = strings.ReplaceAll(piece, "{}", choice)
-			toRun = append(toRun, piece)
-		}
+		run := templatedcmd.Expand(cf.exec, choice, "")
 
 		//
 		// Run it.
 		//
-		cmd := exec.Command(toRun[0], toRun[1:]...)
+		cmd := exec.Command(run[0], run[1:]...)
 		out, errr := cmd.CombinedOutput()
 		if errr != nil {
-			fmt.Printf("Error running '%s': %s\n", cf.exec, errr.Error())
+			fmt.Printf("Error running '%v': %s\n", run, errr.Error())
 			return 1
 		}
 
