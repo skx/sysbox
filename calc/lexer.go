@@ -1,6 +1,10 @@
 package calc
 
-import "strconv"
+import (
+	"fmt"
+	"strconv"
+	"strings"
+)
 
 // These constants are used to return the type of
 // token which has been lexed.
@@ -95,7 +99,7 @@ func (l *Lexer) Next() *Token {
 			continue
 
 			// Is it a digit?
-		case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".":
+		case "-", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".":
 			//
 			// Loop for more digits
 			//
@@ -121,7 +125,8 @@ func (l *Lexer) Next() *Token {
 					c != "7" &&
 					c != "8" &&
 					c != "9" &&
-					c != "." {
+					c != "." &&
+					c != "-" {
 					break
 				}
 				end++
@@ -131,6 +136,19 @@ func (l *Lexer) Next() *Token {
 
 			// Here we have the number
 			token := l.input[start:end]
+
+			// too many periods?
+			bits := strings.Split(token, ".")
+			if len(bits) > 2 {
+				return &Token{Type: ERROR, Value: fmt.Sprintf("too many periods in '%s'", token)}
+			}
+
+			// We can only have a "-" at the start of the number
+			for idx, chr := range token {
+				if chr == rune('-') && idx != 0 {
+					return &Token{Type: ERROR, Value: fmt.Sprintf("- can only appear at the start of a number, fond: %s", token)}
+				}
+			}
 
 			// Convert to float64
 			number, err := strconv.ParseFloat(token, 64)

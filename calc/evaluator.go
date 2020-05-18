@@ -227,6 +227,14 @@ func (e *Evaluator) factor() *Token {
 		e.nextToken()
 
 		return res
+	case MINUS:
+		// If the next token is a number then we're good
+		if e.peekToken().Type == NUMBER {
+			val := e.nextToken()
+			cur := val.Value.(float64)
+			val.Value = cur * -1
+			return val
+		}
 	}
 
 	return &Token{Type: ERROR, Value: fmt.Sprintf("Unexpected token inside factor() - %v\n", tok)}
