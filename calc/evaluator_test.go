@@ -27,6 +27,7 @@ func TestBasic(t *testing.T) {
 		{"1 / 3 * 9", 3},
 		{"( 1 / 3 ) * 9", 3},
 		{"1 - 3", -2},
+		{"-1 + 3", 2},
 		{"( 1 + 2 ) * 4", 12},
 		{"( ( 1 + 2 ) * 4 )", 12},
 	}
@@ -83,6 +84,11 @@ func TestMissingVariable(t *testing.T) {
 		{"let a = 1 - b"},
 		{"let a = 1 / b"},
 		{"let a = 1 * b"},
+
+		{"let a =  b + 1"},
+		{"let a =  b - 1"},
+		{"let a =  b / 1"},
+		{"let a =  b * 2"},
 	}
 
 	for _, test := range tests {
@@ -101,8 +107,8 @@ func TestMissingVariable(t *testing.T) {
 	}
 }
 
-// Test for errors
-func TestBogusAssign(t *testing.T) {
+// TestErrorCases looks for some basic errors.
+func TestErrorCases(t *testing.T) {
 
 	tests := []struct {
 		input string
@@ -111,6 +117,8 @@ func TestBogusAssign(t *testing.T) {
 		{"let 1 = 1", "is not an identifier"},
 		{"let foo = ; ", "EOF"},
 		{"let foo foo ; ", "not an assignment statement"},
+		{"let foo = ( 1 + 2 * 3 ", "expected ')'"},
+		{")", "Unexpected token inside factor"},
 	}
 
 	for _, test := range tests {
