@@ -45,6 +45,20 @@ func TestLexer(t *testing.T) {
 // Test we can parse numbers correctly
 func TestNumbers(t *testing.T) {
 
+	//
+	// We're going to create a number so big that it cannot
+	// be parsed by strconv.ParseFloat.
+	//
+	// Maximum value.
+	//
+	fmax := 1.7976931348623157e+308
+
+	// Now, as a string.
+	fmaxStr := fmt.Sprintf("%f", fmax)
+
+	// Add a prefix to make it too big.
+	fmaxStr = "9999" + fmaxStr
+
 	tests := []struct {
 		input  string
 		error  bool
@@ -54,6 +68,7 @@ func TestNumbers(t *testing.T) {
 		{".1", false, ""},
 		{".1.1", true, "too many"},
 		{"12-3", true, "only appear at the start"},
+		{fmaxStr, true, "failed to parse number"},
 	}
 
 	for n, test := range tests {
