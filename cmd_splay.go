@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -34,7 +35,15 @@ to perform a cron-job, but you don't want to overwhelm a central system
 by having all those events occur at precisely the same time (which is
 likely to happen if you're running with good clocks).
 
-Give each script a random-delay via adding a call to the splay subcommand.`
+Give each script a random-delay via adding a call to the splay subcommand.
+
+Usage:
+
+We prefer users to specify the splay-time with a parameter, but to allow
+natural usage you may specify as the first argument:
+
+   $ sysbox splay --maximum=10 [-verbose]
+   $ sysbox splay 10 [-verbose]`
 }
 
 // Execute is invoked if the user specifies `splay` as the subcommand.
@@ -42,6 +51,21 @@ func (s *splayCommand) Execute(args []string) int {
 
 	// Ensure we seed our random number generator.
 	rand.Seed(time.Now().UnixNano())
+
+	// If the user gave an argument then use it.
+	//
+	// Because people might expect this to work.
+	if len(args) > 0 {
+
+		// First argument will be a number
+		num, err := strconv.Atoi(args[0])
+		if err != nil {
+			fmt.Printf("error converting %s to integer: %s\n", args[0], err.Error())
+		}
+
+		// Save it away.
+		s.max = num
+	}
 
 	// Get the delay-time.
 	delay := rand.Intn(s.max)
