@@ -128,3 +128,42 @@ func TestBogusAssign(t *testing.T) {
 		}
 	}
 }
+
+// TestAssign tests that assignment work.
+func TestAssign(t *testing.T) {
+	tests := []struct {
+		input    string
+		variable string
+		value    float64
+	}{
+		// with let
+		{"let a = 3", "a", 3},
+		{"let a = 1; let b = 2; let c = 3; let d = a+ b * c", "d", 7},
+
+		// without let
+		{"a = 6", "a", 6},
+		{"a = 1; b = 2; c = 3;  d = a + b * c", "d", 7},
+	}
+
+	for _, test := range tests {
+
+		p := New()
+		p.Load(test.input)
+
+		out := p.Run()
+
+		if out.Type == ERROR {
+			t.Fatalf("unexpected error '%s': %s", test.input, out.Value.(string))
+		}
+
+		// get the variable
+		result, found := p.Variable(test.variable)
+		if !found {
+			t.Fatalf("failed to lookup variable %s in %s", test.variable, test.input)
+		}
+
+		if result != test.value {
+			t.Fatalf("result of '%s' should have been %f, got %f", test.input, test.value, result)
+		}
+	}
+}
