@@ -153,7 +153,7 @@ func (l *Lexer) Next() *Token {
 			// Convert to float64
 			number, err := strconv.ParseFloat(token, 64)
 			if err != nil {
-				return &Token{Value: err.Error(), Type: ERROR}
+				return &Token{Value: fmt.Sprintf("failed to parse number: %s", err.Error()), Type: ERROR}
 			}
 
 			return &Token{Value: number, Type: NUMBER}

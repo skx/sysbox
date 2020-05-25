@@ -50,7 +50,15 @@ use, with the exception that you can define variables:
    9
    calc> a / 9
    0.3333
-`
+   calc> exit
+
+If you prefer you can handle assignments without "let":
+
+   calc> a = 1; b = 2 ; c = 3
+   3
+   calc> a + b * c
+   7
+   calc> exit`
 }
 
 // Execute is invoked if the user specifies `calc` as the subcommand.
