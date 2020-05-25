@@ -39,6 +39,12 @@ func New() *Evaluator {
 	return e
 }
 
+// Variable allows you to return the value of the given variable
+func (e *Evaluator) Variable(name string) (float64, bool) {
+	res, ok := e.variables[name]
+	return res, ok
+}
+
 // Load is used to load a program into the evaluator.
 //
 // Note that the existing variables will maintain their state
@@ -140,7 +146,33 @@ func (e *Evaluator) expr() *Token {
 
 	t1 := e.term()
 
-	// Sleazy.
+	//
+	// If we have an assignment we'll save the result
+	// of the expression here.
+	//
+	// We do this to avoid repetition for "let x = ..." and
+	// "y = ..."
+	//
+	variable := &Token{Type: ERROR, Value: "cant happen"}
+
+	//
+	// Assignment without LET ?
+	//
+	if t1.Type == IDENT {
+		nxt := e.peekToken()
+		if nxt.Type == ASSIGN {
+
+			// Skip the assignment
+			e.nextToken()
+
+			// And we've found a variable to assign to
+			variable = t1
+		}
+	}
+
+	//
+	// Assignment with LET
+	//
 	if t1.Type == LET {
 
 		// Get the identifier.
@@ -155,16 +187,28 @@ func (e *Evaluator) expr() *Token {
 			return &Token{Type: ERROR, Value: fmt.Sprintf("%v is not an assignment statement", ident)}
 		}
 
+		variable = ident
+	}
+
+	//
+	// OK if we have an assignment, of either form, then
+	// process it here.
+	//
+	if variable.Type == IDENT {
+
 		// Calculate the result
 		result := e.expr()
 
 		// Save it, and also return the value.
 		if result.Type == NUMBER {
-			e.variables[ident.Value.(string)] = result.Value.(float64)
+			e.variables[variable.Value.(string)] = result.Value.(float64)
 		}
 		return result
 	}
 
+	//
+	// If we reach here we're now done with assignments.
+	//
 	tok := e.peekToken()
 	for tok.Type == PLUS || tok.Type == MINUS {
 
@@ -201,6 +245,26 @@ func (e *Evaluator) factor() *Token {
 	case NUMBER:
 		return tok
 	case IDENT:
+
+		// sleazy hack here.
+		//
+		// We're getting a factor, but if we have a variable
+		// AND the next token is an assignment then we return
+		// the ident (i.e. current token) to allow Run() to
+		// process "var = expr"
+		//
+		// Without this we'd interpret "foo = 1 + 2" as
+		// a reference to the preexisting variable "foo"
+		// which would not exist.
+		//
+		nxt := e.peekToken()
+		if nxt.Type == ASSIGN {
+			return tok
+		}
+
+		//
+		// OK lookup the content of an existing variable.
+		//
 		val, ok := e.variables[tok.Value.(string)]
 		if ok {
 			return &Token{Value: val, Type: NUMBER}
