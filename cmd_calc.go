@@ -115,7 +115,16 @@ func (c *calcCommand) Execute(args []string) int {
 		if float64(int(result)) == result {
 			fmt.Printf("%d\n", int(result))
 		} else {
-			fmt.Printf("%f\n", result)
+			//
+			// strip trailing "0"
+			//
+			// First convert to string, then remove each
+			// final zero.
+			out := fmt.Sprintf("%f", result)
+			for strings.HasSuffix(out, "0") {
+				out = strings.TrimSuffix(out, "0")
+			}
+			fmt.Printf("%s\n", out)
 		}
 
 		return 0
@@ -180,7 +189,16 @@ func (c *calcCommand) Execute(args []string) int {
 			if float64(int(result)) == result {
 				fmt.Printf("%d\n", int(result))
 			} else {
-				fmt.Printf("%f\n", result)
+				//
+				// strip trailing "0"
+				//
+				// First convert to string, then remove each
+				// final zero.
+				out := fmt.Sprintf("%f", result)
+				for strings.HasSuffix(out, "0") {
+					out = strings.TrimSuffix(out, "0")
+				}
+				fmt.Printf("%s\n", out)
 			}
 
 		}
