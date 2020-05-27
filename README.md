@@ -132,6 +132,14 @@ This is a simple tool which will read STDIN, and output the content without any 
 * Empty lines will be skipped entirely.
 
 
+## cpp
+
+Something _like_ the C preprocessor, but supporting only the ability to include files, and run commands via `#include` and `#execute` respectively:
+
+    #include "file/goes/here"
+    #execute ls -l | wc -l
+
+
 ## env-template
 
 Perform expansion, via environmental variables, on simple golang templates.

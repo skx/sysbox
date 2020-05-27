@@ -34,6 +34,7 @@ func main() {
 	subcommands.Register(&chooseSTDINCommand{})
 	subcommands.Register(&chronicCommand{})
 	subcommands.Register(&collapseCommand{})
+	subcommands.Register(&cppCommand{})
 	subcommands.Register(&envTemplateCommand{})
 	subcommands.Register(&execSTDINCommand{})
 	subcommands.Register(&fingerdCommand{})
