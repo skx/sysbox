@@ -40,23 +40,42 @@ type Token struct {
 	//
 	// If the type of the token is NUMBER then this
 	// will be stored as a float64.  Otherwise the
-	// value will be a string.
+	// value will be a string representation of the token.
+	//
 	Value interface{}
 }
 
 // Lexer holds our lexer state.
 type Lexer struct {
 
-	// input is the string we're lexing
+	// input is the string we're lexing.
 	input string
 
-	// position is the current position within the input-string
+	// position is the current position within the input-string.
 	position int
+
+	// simple map of single-character tokens to their type
+	known map[string]string
 }
 
 // NewLexer creates a new lexer, for the given input.
 func NewLexer(input string) *Lexer {
-	return &Lexer{input: input}
+
+	// Create the lexer object.
+	l := &Lexer{input: input}
+
+	// Populate the simple token-types in a map for
+	// later use.
+	l.known = make(map[string]string)
+	l.known["*"] = MULTIPLY
+	l.known["+"] = PLUS
+	l.known["-"] = MINUS
+	l.known["/"] = DIVIDE
+	l.known["="] = ASSIGN
+	l.known["("] = LPAREN
+	l.known[")"] = RPAREN
+
+	return l
 }
 
 // Next returns the next token from our input stream.
@@ -66,16 +85,6 @@ func NewLexer(input string) *Lexer {
 // operators.
 func (l *Lexer) Next() *Token {
 
-	// Known-token-types
-	known := make(map[string]string)
-	known["*"] = MULTIPLY
-	known["+"] = PLUS
-	known["-"] = MINUS
-	known["/"] = DIVIDE
-	known["="] = ASSIGN
-	known["("] = LPAREN
-	known[")"] = RPAREN
-
 	// Loop until we've exhausted our input.
 	for l.position < len(l.input) {
 
@@ -83,7 +92,7 @@ func (l *Lexer) Next() *Token {
 		char := string(l.input[l.position])
 
 		// Is this a known character/token?
-		t, ok := known[char]
+		t, ok := l.known[char]
 		if ok {
 			// skip the character, and return the token
 			l.position++
@@ -100,6 +109,7 @@ func (l *Lexer) Next() *Token {
 
 			// Is it a digit?
 		case "-", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".":
+
 			//
 			// Loop for more digits
 			//
@@ -113,20 +123,8 @@ func (l *Lexer) Next() *Token {
 			// keep walking forward, minding we don't wander
 			// out of our input.
 			for end < len(l.input) {
-				c := string(l.input[end])
 
-				if c != "0" &&
-					c != "1" &&
-					c != "2" &&
-					c != "3" &&
-					c != "4" &&
-					c != "5" &&
-					c != "6" &&
-					c != "7" &&
-					c != "8" &&
-					c != "9" &&
-					c != "." &&
-					c != "-" {
+				if !l.isNumberComponent(l.input[end]) {
 					break
 				}
 				end++
@@ -173,47 +171,66 @@ func (l *Lexer) Next() *Token {
 			// out of our input.
 			for end < len(l.input) {
 
-				c := string(l.input[end])
-
-				if c == " " ||
-					c == "\t" ||
-					c == "\n " ||
-					c == "1" ||
-					c == "2" ||
-					c == "3" ||
-					c == "4" ||
-					c == "5" ||
-					c == "6" ||
-					c == "7" ||
-					c == "8" ||
-					c == "9" ||
-					c == "." ||
-					c == "+" ||
-					c == "-" ||
-					c == "/" ||
-					c == "*" ||
-					c == ";" ||
-					c == "(" ||
-					c == ")" ||
-					c == "=" {
+				// Build up identifiers from any permitted
+				// character - which is just a-zA-Z
+				if !l.isIdentifierCharacter(l.input[end]) {
 					break
 				}
+
 				end++
 			}
 
 			l.position = end
 			token := l.input[start:end]
 
-			// We only have a single keyword, LET, handle it here.
-			if token == "let" {
+			//
+			// In a real language/lexer we might have a lot
+			// of keywords/reserved-words.
+			//
+			// We only have to cope with "let".
+			//
+			// If the identifier was LET then return that
+			// token instead.
+			//
+			if strings.ToLower(token) == "let" {
 				return &Token{Value: "let", Type: LET}
 			}
 
+			//
 			// If it wasn't `let` it was an identifier.
+			//
 			return &Token{Value: token, Type: IDENT}
 		}
 
 	}
 
 	return &Token{Value: "", Type: EOF}
+}
+
+// isIdentifierCharacter tests whether the given character is
+// valid for use in an identifier.
+func (l *Lexer) isIdentifierCharacter(d byte) bool {
+
+	if (d >= 'a' && d <= 'z') ||
+		(d >= 'A' && d <= 'Z') {
+		return true
+	}
+
+	return false
+}
+
+// isNumberComponent looks for characters that can make up integers/floats
+func (l *Lexer) isNumberComponent(d byte) bool {
+
+	// digits
+	if d >= '0' && d <= '9' {
+		return true
+	}
+
+	// negative/floating-point numbers
+	if d == '-' || d == '.' {
+		return true
+	}
+
+	return false
 }
