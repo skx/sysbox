@@ -175,11 +175,11 @@ func (c *calcCommand) Execute(args []string) int {
 			//
 			if out.Type == calc.ERROR {
 				fmt.Printf("error: %s\n", out.Value.(string))
-				return 1
+				goto repeat
 			}
 			if out.Type != calc.NUMBER {
 				fmt.Printf("unexpected output %v\n", out)
-				return 1
+				goto repeat
 			}
 
 			//
@@ -202,6 +202,7 @@ func (c *calcCommand) Execute(args []string) int {
 			}
 
 		}
+	repeat:
 		fmt.Printf("calc> ")
 	}
 
