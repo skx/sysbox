@@ -193,6 +193,8 @@ func (l *Lexer) Next() *Token {
 					c == "/" ||
 					c == "*" ||
 					c == ";" ||
+					c == "(" ||
+					c == ")" ||
 					c == "=" {
 					break
 				}
