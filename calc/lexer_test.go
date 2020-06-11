@@ -102,3 +102,33 @@ func TestNumbers(t *testing.T) {
 	}
 
 }
+
+func TestIssue15(t *testing.T) {
+	tests := []struct {
+		expectedType    string
+		expectedLiteral string
+	}{
+		{LET, "let"},
+		{IDENT, "b"},
+		{ASSIGN, "="},
+		{NUMBER, "1"},
+		{LPAREN, "("},
+		{IDENT, "b"},
+		{MINUS, "-"},
+		{IDENT, "b"},
+		{RPAREN, ")"},
+		{EOF, ""},
+	}
+
+	l := NewLexer("let b = 1; ( b -b)")
+
+	for i, tt := range tests {
+		tok := l.Next()
+		if tok.Type != tt.expectedType {
+			t.Fatalf("tests[%d] - tokentype wrong, expected=%q, got=%q", i, tt.expectedType, tok.Type)
+		}
+		if fmt.Sprintf("%v", tok.Value) != tt.expectedLiteral {
+			t.Fatalf("tests[%d] - Literal wrong, expected=%q, got=%q", i, tt.expectedLiteral, tok.Value)
+		}
+	}
+}
