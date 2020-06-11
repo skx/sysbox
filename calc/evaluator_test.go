@@ -115,10 +115,16 @@ func TestErrorCases(t *testing.T) {
 		error string
 	}{
 		{"let 1 = 1", "is not an identifier"},
+		{"let a = 1 / let", "is not a number"},
+		{"let a = let / 3 ", "is not a number"},
+		{"let 1 = 1", "is not an identifier"},
 		{"let foo = ; ", "EOF"},
 		{"let foo foo ; ", "not an assignment statement"},
 		{"let foo = ( 1 + 2 * 3 ", "expected ')'"},
 		{")", "Unexpected token inside factor"},
+
+		// `let` is a LET token, not a generic identifier.
+		{"let let = 3", " is not an identifier"},
 	}
 
 	for _, test := range tests {

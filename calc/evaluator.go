@@ -112,9 +112,11 @@ func (e *Evaluator) term() *Token {
 
 		f2 := e.factor()
 
-		// error handling
-		if f2.Type == ERROR {
-			return f2
+		if f1.Type != NUMBER {
+			return &Token{Type: ERROR, Value: fmt.Sprintf("%v is not a number", f1)}
+		}
+		if f2.Type != NUMBER {
+			return &Token{Type: ERROR, Value: fmt.Sprintf("%v is not a number", f2)}
 		}
 
 		if op.Type == MULTIPLY {
