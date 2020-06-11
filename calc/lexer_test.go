@@ -28,7 +28,7 @@ func TestLexer(t *testing.T) {
 		{EOF, ""},
 	}
 
-	l := NewLexer("let * = 3 + 4 * 5 - 1 / 2")
+	l := NewLexer("LEt * = 3 + 4 * 5 - 1 / 2")
 
 	for i, tt := range tests {
 		tok := l.Next()
@@ -103,6 +103,7 @@ func TestNumbers(t *testing.T) {
 
 }
 
+// TestIssue15 confirms https://github.com/skx/sysbox/issues/15 is closed.
 func TestIssue15(t *testing.T) {
 	tests := []struct {
 		expectedType    string
@@ -120,7 +121,7 @@ func TestIssue15(t *testing.T) {
 		{EOF, ""},
 	}
 
-	l := NewLexer("let b = 1; ( b -b)")
+	l := NewLexer("LeT b = 1; ( b -b)")
 
 	for i, tt := range tests {
 		tok := l.Next()
