@@ -17,6 +17,9 @@ type execSTDINCommand struct {
 	// testing the command
 	dryRun bool
 
+	// parallel job count
+	parallel int
+
 	// verbose flag
 	verbose bool
 
@@ -24,12 +27,42 @@ type execSTDINCommand struct {
 	split string
 }
 
+// Type Command holds a command we're going to execute in a worker-process.
+type Command struct {
+
+	// args holds the command + args to execute.
+	args []string
+}
+
 // Arguments adds per-command args to the object.
 func (es *execSTDINCommand) Arguments(f *flag.FlagSet) {
 	f.BoolVar(&es.dryRun, "dry-run", false, "Don't run the command.")
-	f.BoolVar(&es.verbose, "verbose", false, "Be verbose")
-	f.StringVar(&es.split, "split", "", "Split on a different character")
+	f.BoolVar(&es.verbose, "verbose", false, "Be verbose.")
+	f.IntVar(&es.parallel, "parallel", 1, "How many jobs to run in parallel.")
+	f.StringVar(&es.split, "split", "", "Split on a different character.")
 
+}
+
+// Worker runs the specified command
+func (es *execSTDINCommand) worker(id int, jobs <-chan Command, results chan<- int) {
+	for j := range jobs {
+
+		// Run the command, and get the output?
+		cmd := exec.Command(j.args[0], j.args[1:]...)
+		out, errr := cmd.CombinedOutput()
+
+		// error?
+		if errr != nil {
+			fmt.Printf("Error running '%v': %s\n", jobs, errr.Error())
+			os.Exit(1)
+		}
+
+		// Show the output
+		fmt.Printf("%s", out)
+
+		// And output a result
+		results <- 1
+	}
 }
 
 // Info returns the name of this subcommand.
@@ -103,6 +136,9 @@ func (es *execSTDINCommand) Execute(args []string) int {
 	//
 	scanner := bufio.NewReader(os.Stdin)
 
+	// The jobs we're going to add.
+	var toRun []Command
+
 	//
 	// Read a line
 	//
@@ -126,17 +162,7 @@ func (es *execSTDINCommand) Execute(args []string) int {
 		//
 		if !es.dryRun {
 
-			cmd := exec.Command(run[0], run[1:]...)
-			out, errr := cmd.CombinedOutput()
-			if errr != nil {
-				fmt.Printf("Error running '%v': %s\n", run, errr.Error())
-				return 1
-			}
-
-			//
-			// Show the output
-			//
-			fmt.Printf("%s", out)
+			toRun = append(toRun, Command{args: run})
 		}
 
 		//
@@ -145,5 +171,35 @@ func (es *execSTDINCommand) Execute(args []string) int {
 		line, err = scanner.ReadString(byte('\n'))
 	}
 
+	//
+	// We've built up all the commands we're going to run now.
+	//
+	// Get the number, and create suitable channels.
+	//
+	num := len(toRun)
+	jobs := make(chan Command, num)
+	results := make(chan int, num)
+
+	//
+	// Launch the appropriate number of parallel workers.
+	//
+	for w := 1; w <= es.parallel; w++ {
+		go es.worker(w, jobs, results)
+	}
+
+	//
+	// Add all the pending jobs.
+	//
+	for _, j := range toRun {
+		jobs <- j
+	}
+	close(jobs)
+
+	//
+	// Await all the results.
+	//
+	for a := 1; a <= num; a++ {
+		<-results
+	}
 	return 0
 }
