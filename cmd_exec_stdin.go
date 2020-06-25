@@ -27,7 +27,7 @@ type execSTDINCommand struct {
 	split string
 }
 
-// Type Command holds a command we're going to execute in a worker-process.
+// Command holds a command we're going to execute in a worker-process.
 //
 // (Command in this sense is a system-binary / external process.)
 type Command struct {
