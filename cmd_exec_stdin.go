@@ -28,6 +28,8 @@ type execSTDINCommand struct {
 }
 
 // Type Command holds a command we're going to execute in a worker-process.
+//
+// (Command in this sense is a system-binary / external process.)
 type Command struct {
 
 	// args holds the command + args to execute.
@@ -43,7 +45,9 @@ func (es *execSTDINCommand) Arguments(f *flag.FlagSet) {
 
 }
 
-// Worker runs the specified command
+// worker reads a command to execute from the channel, and executes it.
+//
+// The result is pushed back, but ignored.
 func (es *execSTDINCommand) worker(id int, jobs <-chan Command, results chan<- int) {
 	for j := range jobs {
 
@@ -53,14 +57,14 @@ func (es *execSTDINCommand) worker(id int, jobs <-chan Command, results chan<- i
 
 		// error?
 		if errr != nil {
-			fmt.Printf("Error running '%v': %s\n", jobs, errr.Error())
-			os.Exit(1)
+			fmt.Printf("Error running '%s': %s\n", strings.Join(j.args, " "), errr.Error())
+		} else {
+
+			// Show the output
+			fmt.Printf("%s", out)
 		}
 
-		// Show the output
-		fmt.Printf("%s", out)
-
-		// And output a result
+		// Send a result to our output channel.
 		results <- 1
 	}
 }
@@ -104,6 +108,9 @@ for operating upon CSV files, or in case you wish to split '/etc/passwd' on
 
   $ cat /etc/passwd | sysbox exec-stdin -split=: groups {1}
 
+If you wish you can run the commands in parallel, using the -parallel flag
+to denote how many simultaneous executions are permitted.
+
 The only other flag is '-verbose', to show the command that would be
 executed and '-dry-run' to avoid running anything.`
 }
@@ -122,9 +129,7 @@ func (es *execSTDINCommand) Execute(args []string) int {
 	}
 
 	//
-	// If we have no arguments then we're in the repl.
-	//
-	// Otherwise we process the input.
+	// Ensure we have a command.
 	//
 	if cmd == "" {
 		fmt.Printf("Usage: sysbox exec-stdin command .. args {}..\n")
@@ -136,7 +141,11 @@ func (es *execSTDINCommand) Execute(args []string) int {
 	//
 	scanner := bufio.NewReader(os.Stdin)
 
+	//
 	// The jobs we're going to add.
+	//
+	// We save these away so that we can allow parallel execution later.
+	//
 	var toRun []Command
 
 	//
@@ -158,10 +167,10 @@ func (es *execSTDINCommand) Execute(args []string) int {
 		}
 
 		//
-		// Run, unless we're not supposed to
+		// If we're not in "pretend"-mode then we'll save the
+		// constructed command away.
 		//
 		if !es.dryRun {
-
 			toRun = append(toRun, Command{args: run})
 		}
 
