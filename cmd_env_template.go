@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"regexp"
 	"strings"
 	"text/template"
@@ -74,8 +75,13 @@ Or lines between a pair of marker (regular expressions):
 
    {{between "/etc/passwd" "^root" "^bin"}}
 
+If the input-file contains a '|' prefix it will instead read the output
+of running the named command - so you shouldn't process user-submitted
+templates, as that is a potential security-risk.
+
 NOTE: Using 'between' includes the lines that match too, not just the region
 between them.  If you regard this as a bug please file an issue.
+
 `
 
 }
@@ -103,6 +109,26 @@ func (et *envTemplateCommand) Execute(args []string) int {
 	return fail
 }
 
+// runCommand returns the output of running the given command
+func (et *envTemplateCommand) runCommand(command string) ([]byte, error) {
+
+	// Build up the thing to run, using a shell so that
+	// we can handle pipes/redirection.
+	toRun := []string{"/bin/bash", "-c", command}
+
+	// Run the command
+	cmd := exec.Command(toRun[0], toRun[1:]...)
+
+	// Get the output
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return []byte{}, fmt.Errorf("error running command '%s' %s", command, err.Error())
+	}
+
+	// Strip trailing newline.
+	return output, nil
+}
+
 // expandFile does the file expansion
 func (et *envTemplateCommand) expandFile(path string) error {
 
@@ -121,8 +147,16 @@ func (et *envTemplateCommand) expandFile(path string) error {
 	funcMap := template.FuncMap{
 		"between": func(in string, begin string, end string) string {
 
-			// Read the named file.
-			content, err = ioutil.ReadFile(in)
+			// Read the named file/command-output here.
+			var content []byte
+			var err error
+
+			if strings.HasPrefix(in, "|") {
+
+				content, err = et.runCommand(strings.TrimPrefix(in, "|"))
+			} else {
+				content, err = ioutil.ReadFile(in)
+			}
 
 			if err != nil {
 				return fmt.Sprintf("error reading %s: %s", in, err.Error())
@@ -176,7 +210,16 @@ func (et *envTemplateCommand) expandFile(path string) error {
 		},
 		"grep": func(in string, pattern string) string {
 
-			content, err = ioutil.ReadFile(in)
+			// Read the named file/command-output here.
+			var content []byte
+			var err error
+
+			if strings.HasPrefix(in, "|") {
+
+				content, err = et.runCommand(strings.TrimPrefix(in, "|"))
+			} else {
+				content, err = ioutil.ReadFile(in)
+			}
 
 			if err != nil {
 				return fmt.Sprintf("error reading %s: %s", in, err.Error())
@@ -197,7 +240,18 @@ func (et *envTemplateCommand) expandFile(path string) error {
 
 		},
 		"include": func(in string) string {
-			content, err = ioutil.ReadFile(in)
+
+			// Read the named file/command-output here.
+			var content []byte
+			var err error
+
+			if strings.HasPrefix(in, "|") {
+
+				content, err = et.runCommand(strings.TrimPrefix(in, "|"))
+			} else {
+				content, err = ioutil.ReadFile(in)
+			}
+
 			if err != nil {
 				return fmt.Sprintf("error reading %s: %s", in, err.Error())
 			}

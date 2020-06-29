@@ -154,7 +154,8 @@ You can freely use the built-in golang template facilities, for example please s
 * Including lines from a file which match a particular regular expression.
 * Including the region from a file which is bounded by two regular expressions.
 
-This facility was inspired by the [embedmd](https://github.com/campoy/embedmd) utility, and added in [#17](https://github.com/skx/sysbox/issues/17).
+See `sysbox help env-template` for further details, and examples.  You'll also
+see it is possible to execute arbitrary commands and read their output.  This facility was inspired by the [embedmd](https://github.com/campoy/embedmd) utility, and added in [#17](https://github.com/skx/sysbox/issues/17).
 
 
 ## exec-stdin
