@@ -148,9 +148,6 @@ func (et *envTemplateCommand) expandFile(path string) error {
 		"between": func(in string, begin string, end string) string {
 
 			// Read the named file/command-output here.
-			var content []byte
-			var err error
-
 			if strings.HasPrefix(in, "|") {
 
 				content, err = et.runCommand(strings.TrimPrefix(in, "|"))
@@ -211,9 +208,6 @@ func (et *envTemplateCommand) expandFile(path string) error {
 		"grep": func(in string, pattern string) string {
 
 			// Read the named file/command-output here.
-			var content []byte
-			var err error
-
 			if strings.HasPrefix(in, "|") {
 
 				content, err = et.runCommand(strings.TrimPrefix(in, "|"))
@@ -242,9 +236,6 @@ func (et *envTemplateCommand) expandFile(path string) error {
 		"include": func(in string) string {
 
 			// Read the named file/command-output here.
-			var content []byte
-			var err error
-
 			if strings.HasPrefix(in, "|") {
 
 				content, err = et.runCommand(strings.TrimPrefix(in, "|"))
