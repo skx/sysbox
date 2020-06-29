@@ -107,7 +107,9 @@ func (et *envTemplateCommand) Execute(args []string) int {
 func (et *envTemplateCommand) expandFile(path string) error {
 
 	// Load the file
-	content, err := ioutil.ReadFile(path)
+	var err error
+	var content []byte
+	content, err = ioutil.ReadFile(path)
 	if err != nil {
 		return err
 	}
@@ -120,7 +122,7 @@ func (et *envTemplateCommand) expandFile(path string) error {
 		"between": func(in string, begin string, end string) string {
 
 			// Read the named file.
-			dat, err := ioutil.ReadFile(in)
+			content, err = ioutil.ReadFile(in)
 
 			if err != nil {
 				return fmt.Sprintf("error reading %s: %s", in, err.Error())
@@ -133,10 +135,11 @@ func (et *envTemplateCommand) expandFile(path string) error {
 			var found bool
 
 			// for each line
-			for _, line := range strings.Split(string(dat), "\n") {
+			for _, line := range strings.Split(string(content), "\n") {
 
 				// in the section we care about?
-				matched, err := regexp.MatchString(begin, line)
+				var matched bool
+				matched, err = regexp.MatchString(begin, line)
 				if err != nil {
 					return fmt.Sprintf("error matching %s: %s", begin, err.Error())
 				}
@@ -155,7 +158,7 @@ func (et *envTemplateCommand) expandFile(path string) error {
 
 				// are we closing a match?
 				if found {
-					matched, err := regexp.MatchString(end, line)
+					matched, err = regexp.MatchString(end, line)
 					if err != nil {
 						return fmt.Sprintf("error matching %s: %s", end, err.Error())
 					}
@@ -173,15 +176,16 @@ func (et *envTemplateCommand) expandFile(path string) error {
 		},
 		"grep": func(in string, pattern string) string {
 
-			dat, err := ioutil.ReadFile(in)
+			content, err = ioutil.ReadFile(in)
 
 			if err != nil {
 				return fmt.Sprintf("error reading %s: %s", in, err.Error())
 			}
 
+			var matched bool
 			res := []string{}
-			for _, line := range strings.Split(string(dat), "\n") {
-				matched, err := regexp.MatchString(pattern, line)
+			for _, line := range strings.Split(string(content), "\n") {
+				matched, err = regexp.MatchString(pattern, line)
 				if err != nil {
 					return fmt.Sprintf("error matching %s: %s", pattern, err.Error())
 				}
@@ -193,11 +197,11 @@ func (et *envTemplateCommand) expandFile(path string) error {
 
 		},
 		"include": func(in string) string {
-			dat, err := ioutil.ReadFile(in)
+			content, err = ioutil.ReadFile(in)
 			if err != nil {
 				return fmt.Sprintf("error reading %s: %s", in, err.Error())
 			}
-			return (string(dat))
+			return (string(content))
 		},
 		"split": func(in string, delim string) []string {
 			return strings.Split(in, delim)
