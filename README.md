@@ -139,6 +139,8 @@ Something _like_ the C preprocessor, but supporting only the ability to include 
     #include "file/goes/here"
     #execute ls -l | wc -l
 
+See also `env-template` which allows more flexibility in running commands, and including files (or parts of files) via templates.
+
 
 ## env-template
 
@@ -156,6 +158,8 @@ You can freely use the built-in golang template facilities, for example please s
 
 See `sysbox help env-template` for further details, and examples.  You'll also
 see it is possible to execute arbitrary commands and read their output.  This facility was inspired by the [embedmd](https://github.com/campoy/embedmd) utility, and added in [#17](https://github.com/skx/sysbox/issues/17).
+
+See also `cpp` for a less flexible alternative with regard to mere file inclusion and command-execution.
 
 
 ## exec-stdin
