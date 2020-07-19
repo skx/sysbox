@@ -176,6 +176,24 @@ $ ps -ef | sysbox exec-stdin echo field1:{1} field2:{2} line:{}
 See the usage-information for more details (`sysbox help exec-stdin`), but consider this a simple union of `awk`, `xargs`, and GNU parallel (since we can run multiple commands in parallel).
 
 
+## expect
+
+expect allows you to spawn a process, and send input in response to given output read from that process.  It can be used to perform simple scripting operations against remote routers, etc.
+
+For examples please consult the output of `sysbox help expect`, but a simple example would be the following, which uses telnet to connect to a remote host and run a couple of commands.  Note that we use `\r\n` explicitly, due to telnet being in use, and that there is no password-authentication required in this example:
+
+```sh
+    $ cat script.in
+    SPAWN telnet telehack.com
+    EXPECT \n\.
+    SEND   date\r\n
+    EXPECT \n\.
+    SEND   quit\r\n
+
+    $ sysbox expect script.in
+```
+
+
 ## fingerd
 
 A trivial finger-server.
