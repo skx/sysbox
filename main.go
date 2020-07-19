@@ -36,6 +36,7 @@ func main() {
 	subcommands.Register(&collapseCommand{})
 	subcommands.Register(&cppCommand{})
 	subcommands.Register(&envTemplateCommand{})
+	subcommands.Register(&expectCommand{})
 	subcommands.Register(&execSTDINCommand{})
 	subcommands.Register(&fingerdCommand{})
 	subcommands.Register(&httpdCommand{})
