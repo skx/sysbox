@@ -65,10 +65,10 @@ If you prefer you can handle assignments without "let":
 func (c *calcCommand) showResult(out *calc.Token) error {
 
 	if out.Type == calc.ERROR {
-		return fmt.Errorf("error: %s\n", out.Value.(string))
+		return fmt.Errorf("error: %s", out.Value.(string))
 	}
 	if out.Type != calc.NUMBER {
-		return fmt.Errorf("unexpected output %v\n", out)
+		return fmt.Errorf("unexpected output (not a number): %v", out)
 	}
 
 	//
