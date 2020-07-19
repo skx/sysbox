@@ -61,6 +61,38 @@ If you prefer you can handle assignments without "let":
    calc> exit`
 }
 
+// Show the result of a calculation
+func (c *calcCommand) showResult(out *calc.Token) error {
+
+	if out.Type == calc.ERROR {
+		return fmt.Errorf("error: %s\n", out.Value.(string))
+	}
+	if out.Type != calc.NUMBER {
+		return fmt.Errorf("unexpected output %v\n", out)
+	}
+
+	//
+	// Show the result as an int, if possible.
+	//
+	result := out.Value.(float64)
+	if float64(int(result)) == result {
+		fmt.Printf("%d\n", int(result))
+		return nil
+	}
+
+	//
+	// strip trailing "0"
+	//
+	// First convert to string, then remove each
+	// final zero.
+	output := fmt.Sprintf("%f", result)
+	for strings.HasSuffix(output, "0") {
+		output = strings.TrimSuffix(output, "0")
+	}
+	fmt.Printf("%s\n", output)
+	return nil
+}
+
 // Execute is invoked if the user specifies `calc` as the subcommand.
 func (c *calcCommand) Execute(args []string) int {
 
@@ -97,34 +129,12 @@ func (c *calcCommand) Execute(args []string) int {
 		out := cal.Run()
 
 		//
-		// Check for errors
+		// Show the result.
 		//
-		if out.Type == calc.ERROR {
-			fmt.Printf("error: %s\n", out.Value.(string))
+		err := c.showResult(out)
+		if err != nil {
+			fmt.Printf("error: %s\n", err)
 			return 1
-		}
-		if out.Type != calc.NUMBER {
-			fmt.Printf("unexpected output %v\n", out)
-			return 1
-		}
-
-		//
-		// Show the result; int-preferred, if possible
-		//
-		result := out.Value.(float64)
-		if float64(int(result)) == result {
-			fmt.Printf("%d\n", int(result))
-		} else {
-			//
-			// strip trailing "0"
-			//
-			// First convert to string, then remove each
-			// final zero.
-			out := fmt.Sprintf("%f", result)
-			for strings.HasSuffix(out, "0") {
-				out = strings.TrimSuffix(out, "0")
-			}
-			fmt.Printf("%s\n", out)
 		}
 
 		return 0
@@ -171,38 +181,17 @@ func (c *calcCommand) Execute(args []string) int {
 			out := cal.Run()
 
 			//
-			// Check for errors
+			// Show the result.
 			//
-			if out.Type == calc.ERROR {
-				fmt.Printf("error: %s\n", out.Value.(string))
-				goto repeat
-			}
-			if out.Type != calc.NUMBER {
-				fmt.Printf("unexpected output %v\n", out)
-				goto repeat
-			}
-
-			//
-			// Show the result; int-preferred, if possible
-			//
-			result := out.Value.(float64)
-			if float64(int(result)) == result {
-				fmt.Printf("%d\n", int(result))
-			} else {
-				//
-				// strip trailing "0"
-				//
-				// First convert to string, then remove each
-				// final zero.
-				out := fmt.Sprintf("%f", result)
-				for strings.HasSuffix(out, "0") {
-					out = strings.TrimSuffix(out, "0")
-				}
-				fmt.Printf("%s\n", out)
+			err := c.showResult(out)
+			if err != nil {
+				fmt.Printf("error: %s\n", err)
 			}
 
 		}
-	repeat:
+
+		// Show the prompt again, before looping back for
+		// more input.
 		fmt.Printf("calc> ")
 	}
 
