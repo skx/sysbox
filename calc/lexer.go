@@ -103,7 +103,7 @@ func (l *Lexer) Next() *Token {
 		switch char {
 
 		// Skip whitespace
-		case " ", "\t", "\n", ";":
+		case " ", "\n", "\r", "\t", ";":
 			l.position++
 			continue
 
@@ -155,55 +155,58 @@ func (l *Lexer) Next() *Token {
 			}
 
 			return &Token{Value: number, Type: NUMBER}
-
-		default:
-			//
-			// We'll assume we have an identifier
-			//
-
-			// Starting offset of our ident
-			start := l.position
-
-			// ending offset of our ident.
-			end := l.position
-
-			// keep walking forward, minding we don't wander
-			// out of our input.
-			for end < len(l.input) {
-
-				// Build up identifiers from any permitted
-				// character - which is just a-zA-Z
-				if !l.isIdentifierCharacter(l.input[end]) {
-					break
-				}
-
-				end++
-			}
-
-			l.position = end
-			token := l.input[start:end]
-
-			//
-			// In a real language/lexer we might have a lot
-			// of keywords/reserved-words.
-			//
-			// We only have to cope with "let".
-			//
-			// If the identifier was LET then return that
-			// token instead.
-			//
-			if strings.ToLower(token) == "let" {
-				return &Token{Value: "let", Type: LET}
-			}
-
-			//
-			// If it wasn't `let` it was an identifier.
-			//
-			return &Token{Value: token, Type: IDENT}
 		}
+
+		//
+		// We'll assume we have an identifier at this point.
+		//
+
+		// Starting offset of our ident
+		start := l.position
+
+		// ending offset of our ident.
+		end := l.position
+
+		// keep walking forward, minding we don't wander
+		// out of our input.
+		for end < len(l.input) {
+
+			// Build up identifiers from any permitted
+			// character - which is just a-zA-Z
+			if !l.isIdentifierCharacter(l.input[end]) {
+				break
+			}
+
+			end++
+		}
+
+		l.position = end
+		token := l.input[start:end]
+
+		//
+		// In a real language/lexer we might have a lot
+		// of keywords/reserved-words.
+		//
+		// We only have to cope with "let".
+		//
+		// If the identifier was LET then return that
+		// token instead.
+		//
+		if strings.ToLower(token) == "let" {
+			return &Token{Value: "let", Type: LET}
+		}
+
+		//
+		// If it wasn't `let` it was an identifier.
+		//
+		return &Token{Value: token, Type: IDENT}
 
 	}
 
+	//
+	// If we get here then we've walked past the end of
+	// our input-string.
+	//
 	return &Token{Value: "", Type: EOF}
 }
 
