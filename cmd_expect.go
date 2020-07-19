@@ -96,7 +96,7 @@ func (ec *expectCommand) expectExec(cmd []string) (*expect.GExpect, func() error
 		return nil, nil, fmt.Errorf("error creating pipe: %s", err)
 	}
 
-	if err := c.Start(); err != nil {
+	if err = c.Start(); err != nil {
 		return nil, nil, fmt.Errorf("unexpected error starting command: %+v", err)
 	}
 
@@ -107,8 +107,8 @@ func (ec *expectCommand) expectExec(cmd []string) (*expect.GExpect, func() error
 			In:  stdIn,
 			Out: stdOut,
 			Wait: func() error {
-				err := c.Wait()
-				waitCh <- err
+				er := c.Wait()
+				waitCh <- er
 				return err
 			},
 			Close: c.Process.Kill,
@@ -175,9 +175,9 @@ func (ec *expectCommand) Execute(args []string) int {
 			line = strings.TrimPrefix(line, "TIMEOUT ")
 			line = strings.TrimSpace(line)
 
-			val, err := strconv.Atoi(line)
-			if err != nil {
-				fmt.Printf("error converting timeout value %s to number: %s\n", line, err)
+			val, er := strconv.Atoi(line)
+			if er != nil {
+				fmt.Printf("error converting timeout value %s to number: %s\n", line, er)
 				return 1
 			}
 
