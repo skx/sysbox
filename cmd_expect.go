@@ -35,14 +35,14 @@ func (ec *expectCommand) Info() (string, string) {
 
 Details:
 
-This command allows you to execute an arbitrary command, sending input for
+This command allows you to execute an arbitrary process, sending input for
 matching output which is received.  It is a simple alternative to the 'expect'
-utility.
+utility, famously provided with TCL.
 
-The command requires a configuration file to be used which contains details
-of the command to be executed, and the output/input to receive/send.
+The command requires a configuration file to be specified which contains details
+of the process to be executed, and the output/input to receive/send.
 
-Here is a simple example:
+Here is a simple example, note that the output the command produces is matched via regular expressions, rather than literally.  That's why you'll see "\." used to match a literal period:
 
     # Comments are prefixed with '#'
     # Timeout is expressed in seconds
@@ -57,10 +57,8 @@ Here is a simple example:
     EXPECT \n\.
     SEND   quit\r\n
 
-Note the use of '\r\n' because we're using telnet.  For driving bash you could use something simpler:
+You'll see we use '\r\n' because we're using telnet, for driving bash and other normal commands you'd use '\n' instead as you would expect:
 
-    # Comments are prefixed with '#'
-    # Timeout is expressed in seconds
     TIMEOUT 10
     SPAWN   /bin/bash --login
     EXPECT  $
@@ -68,8 +66,7 @@ Note the use of '\r\n' because we're using telnet.  For driving bash you could u
     EXPECT  $
     SEND    exit\n
 
-If you wish to run commands containing arguments with spaces that is supported
-via quoting:
+If you wish to execute a command, or arguments, containing spaces that is supported via quoting:
 
     SPAWN /path/to/foo arg1 "argument two" arg3 ..
 `
