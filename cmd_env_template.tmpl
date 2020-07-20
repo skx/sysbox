@@ -6,3 +6,15 @@ The contents of $PATH, one per line:
 {{$arr := split (env "PATH") ":"}}
 {{range $k, $v := $arr}}* {{$k}} {{$v}}
 {{end}}
+
+Contents of /etc/issue:
+
+{{include "/etc/issue"}}
+
+Our present working directory:
+
+{{include "|pwd"}}
+
+Files which contain env-template stuff:
+
+{{grep "|/bin/ls -1" "_env_"}}
