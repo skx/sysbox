@@ -85,9 +85,9 @@ The calculator supports either execution of sums via via the command-line, or as
 
 ```
 $ sysbox calc 3.1 + 2.7
-5.800000
+5.8
 
-$ ./sysbox calc
+$ sysbox calc
 calc> let a = 1/3
 0.333333
 calc> a * 9
@@ -144,9 +144,9 @@ See also `env-template` which allows more flexibility in running commands, and i
 
 ## env-template
 
-Perform expansion, via environmental variables, on simple golang templates.
+Perform expansion of golang `text/template` files, with support for getting environmental variables, running commands, and reading other files.
 
-You can freely use the built-in golang template facilities, for example please see the sample template here [cmd_env_template.tmpl](cmd_env_template.tmpl), and the the examples included in the [text/template documentation](https://golang.org/pkg/text/template/).
+You can freely use any of the available golang template facilities, for example please see the sample template here [cmd_env_template.tmpl](cmd_env_template.tmpl), and the the examples included in the [text/template documentation](https://golang.org/pkg/text/template/).
 
 > As an alternative you can consider the `envsubst` binary contained in your system's `gettext{-base}` package.
 
@@ -159,7 +159,7 @@ You can freely use the built-in golang template facilities, for example please s
 See `sysbox help env-template` for further details, and examples.  You'll also
 see it is possible to execute arbitrary commands and read their output.  This facility was inspired by the [embedmd](https://github.com/campoy/embedmd) utility, and added in [#17](https://github.com/skx/sysbox/issues/17).
 
-See also `cpp` for a less flexible alternative with regard to mere file inclusion and command-execution.
+See also `cpp` for a less flexible alternative which is useful for mere file inclusion and command-execution.
 
 
 ## exec-stdin
