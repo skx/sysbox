@@ -4,30 +4,44 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"regexp"
 	"strings"
 )
+
+// Comment is a structure to hold a language/syntax for comments.
+//
+// A comment is denoted as the content between a start-marker, and an
+// end-marker.  For single-line comments we define the end-marker as
+// being a newline.
+type Comment struct {
+
+	// The text which denotes the start of a comment.
+	//
+	// For C++ this might be `/*`, for a shell-script it might be `#`.
+	start string
+
+	// The text which denotes the end of a comment.
+	//
+	// For C++ this might be `*/`, for a shell-script it might be `\n`.
+	end string
+}
 
 // Structure for our options and state.
 type commentsCommand struct {
 
-	// Single-line
-	c bool
-
-	// Multi-line
-	cpp bool
-
-	// Shell, single-line
-	shell bool
+	// The styles of comments to be enabled, as set by the command-line.
+	style string
 
 	// Pretty-print the comments?
 	pretty bool
+
+	// The comments we're matching
+	patterns []Comment
 }
 
 // Arguments adds per-command args to the object.
 func (cc *commentsCommand) Arguments(f *flag.FlagSet) {
-	f.BoolVar(&cc.c, "c", true, "Output C-style comments, prefixed with '//'.")
-	f.BoolVar(&cc.cpp, "cpp", true, "Output C++-style comments, between '/*' and '*/'")
-	f.BoolVar(&cc.shell, "shell", false, "Output shell-style comments, prefixed with '#'")
+	f.StringVar(&cc.style, "style", "c,cpp", "A comma-separated list of the comment-styles to use")
 	f.BoolVar(&cc.pretty, "pretty", false, "Reformat comments for readability")
 
 }
@@ -39,16 +53,20 @@ func (cc *commentsCommand) Info() (string, string) {
 Details:
 
 This naive command outputs the comments which are included in the specified
-filename(s).
+filename(s). This is useful if you wish to run spell-checkers, etc.
 
-This is useful if you wish to run spell-checkers, etc.`
+There is support for outputting single-line and multi-line comments for C,
+C++, Lua, and Golang.  Additional options are welcome.  By default C, and
+C++ are enabled.  To only use Lua comments you could run:
+
+    $ sysbox comments --style=lua *.lua`
 }
 
 // showComment writes the comment to the console, after optionally tidying
 func (cc *commentsCommand) showComment(comment string) {
 	if cc.pretty {
 		// Remove newlines
-		comment = strings.Replace(comment, "\n", "", -1)
+		comment = strings.Replace(comment, "\n", " ", -1)
 
 		// Remove " * "
 		comment = strings.Replace(comment, " * ", " ", -1)
@@ -56,9 +74,12 @@ func (cc *commentsCommand) showComment(comment string) {
 		// Collapse adjacent spaces
 		comment = strings.Join(strings.Fields(comment), " ")
 
-		// Skip empty comments
-		if comment == "//" || comment == "#" || comment == "/* */" {
-			return
+		// Skip empty comments; i.e. just literal matches of
+		// the opening pattern.
+		for _, pattern := range cc.patterns {
+			if comment == pattern.start {
+				return
+			}
 		}
 	}
 
@@ -70,107 +91,73 @@ func (cc *commentsCommand) showComment(comment string) {
 // dumpComments dumps the comments from the given file.
 func (cc *commentsCommand) dumpComments(filename string) {
 
+	// Read the content
 	content, err := ioutil.ReadFile(filename)
 	if err != nil {
 		fmt.Printf("error reading %s: %s\n", filename, err.Error())
 		return
 	}
 
-	// Offset of the file-contents we're looking at
-	offset := 0
-
-	// Are we inside a single/multiline comment at the moment?
-	insideShell := false
-	insideSingle := false
-	insideMultiline := false
-
-	// Current comment
-	comment := ""
-
-	// Walk the contents
-	for offset < (len(content) - 1) {
-
-		// Get the current character, and the next character
-		c := content[offset]
-		cn := content[offset+1]
-
-		// If we're currently inside a comment add on the character
-		if insideShell || insideSingle || insideMultiline {
-			comment += string(c)
-		}
-
-		// If we're inside a single-line comment then
-		// look for the end
-		if insideSingle && c == byte('\n') {
-			insideSingle = false
-			offset++
-
-			// Show the comment, after tidying.
-			cc.showComment(comment)
-
-			comment = ""
-			continue
-		}
-
-		if insideShell && c == byte('\n') {
-			insideShell = false
-			offset++
-
-			// Show the comment, after tidying.
-			cc.showComment(comment)
-
-			comment = ""
-			continue
-		}
-
-		// If we're inside a multiline-line comment then
-		// look for the end.
-		if insideMultiline && c == byte('*') && cn == byte('/') {
-			insideMultiline = false
-			offset++
-
-			// Show the comment, after tidying.
-			comment += "*/"
-			cc.showComment(comment)
-
-			comment = ""
-			continue
-		}
-
-		//
-		// OK we're not inside a comment.
-		//
-		// Has a comment just opened up?
-		//
-		if cc.c && c == byte('/') && cn == byte('/') {
-			insideSingle = true
-			comment = "/"
-		}
-
-		if cc.shell && c == byte('#') {
-			insideShell = true
-			comment = "#"
-		}
-
-		if cc.cpp && c == byte('/') && cn == byte('*') {
-			insideMultiline = true
-			comment = "/"
-		}
-
-		offset++
+	// Convert our internal patterns to a series of regular expressions.
+	var r []*regexp.Regexp
+	for _, pattern := range cc.patterns {
+		reg := "(?s)" + regexp.QuoteMeta(pattern.start) + "(.*?)" + regexp.QuoteMeta(pattern.end)
+		r = append(r, regexp.MustCompile(reg))
 	}
+
+	// Now for each regexp do the matching over the whole input.
+	for _, re := range r {
+		out := re.FindAllSubmatch(content, -1)
+		for _, match := range out {
+			cc.showComment(string(match[0]))
+		}
+	}
+
 }
 
 // Execute is invoked if the user specifies `comments` as the subcommand.
 func (cc *commentsCommand) Execute(args []string) int {
 
+	// Map of known patterns, by name
+	known := make(map[string][]Comment)
+
+	// Populate with the patterns.
+	known["c"] = []Comment{Comment{start: "//", end: "\n"}}
+	known["cpp"] = []Comment{Comment{start: "/*", end: "*/"}}
+	known["lua"] = []Comment{Comment{start: "--[[", end: "--]]"},
+		Comment{start: "-- ", end: "\n"}}
+	known["shell"] = []Comment{Comment{start: "#", end: "\n"}}
+
+	// Ensure we have at least one filename specified.
 	if len(args) <= 0 {
 		fmt.Printf("Usage: comments file1 [file2] ..[argN]\n")
 		return 1
 	}
 
+	// Load the patterns the user selected.
+	for _, kind := range strings.Split(cc.style, ",") {
+
+		// Lookup the choice
+		pat, ok := known[kind]
+
+		// Not found?  That's an error
+		if !ok {
+			fmt.Printf("Unknown style %s, valid options include:\n", kind)
+			for k := range known {
+				fmt.Printf("\t%s\n", k)
+			}
+			return 1
+		}
+
+		// Otherwise add it to the list.
+		cc.patterns = append(cc.patterns, pat...)
+	}
+
+	// Now process the input file(s)
 	for _, file := range args {
 		cc.dumpComments(file)
 	}
+
+	// All done.
 	return 0
 }
