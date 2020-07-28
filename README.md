@@ -124,6 +124,11 @@ $ find ~/Repos -type d | sysbox choose-stdin -execute="firefox {}"
 The chronic command is ideally suited to wrap cronjobs, it runs the command you specify as a child process and hides the output produced __unless__ that process exits with a non-zero exit-code.
 
 
+## comments
+
+This is a simple utility which outputs the comments found in the files named upon the command-line.  Supported comments include C-style single-line comments (prefixed with `//`), C++-style multi-line comments (between `/*` and `*/`), and shell-style comments prefixed with `#`.
+
+
 ## collapse
 
 This is a simple tool which will read STDIN, and output the content without any extra white-space:
