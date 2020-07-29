@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"regexp"
+	"sort"
 	"strings"
 )
 
@@ -122,12 +123,36 @@ func (cc *commentsCommand) Execute(args []string) int {
 	known := make(map[string][]Comment)
 
 	// Populate with the patterns.
+	known["ada"] = []Comment{Comment{start: "--", end: "\n"}}
+	known["apl"] = []Comment{Comment{start: "⍝", end: "\n"}}
+	known["applescript"] = []Comment{Comment{start: "(*", end: "*)"},
+		Comment{start: "--", end: "\n"}}
+
+	known["basic"] = []Comment{Comment{start: "REM", end: "\n"}}
 	known["c"] = []Comment{Comment{start: "//", end: "\n"}}
+	known["coldfusion"] = []Comment{Comment{start: "<!---", end: "--->"}}
 	known["cpp"] = []Comment{Comment{start: "/*", end: "*/"}}
+	known["html"] = []Comment{Comment{start: "<!--", end: "-->"}}
+	known["haskell"] = []Comment{Comment{start: "{-", end: "-}"},
+		Comment{start: "--", end: "\n"}}
+	known["java"] = []Comment{Comment{start: "/*", end: "*/"},
+		Comment{start: "//", end: "\n"}}
+	known["javascript"] = []Comment{Comment{start: "/*", end: "*/"},
+		Comment{start: "//", end: "\n"}}
 	known["lua"] = []Comment{Comment{start: "--[[", end: "--]]"},
 		Comment{start: "-- ", end: "\n"}}
+	known["matlab"] = []Comment{Comment{start: "%{", end: "%}"},
+		Comment{start: "% ", end: "\n"}}
+	known["pascal"] = []Comment{Comment{start: "(*", end: "*)"}}
+	known["perl"] = []Comment{Comment{start: "#", end: "\n"}}
+	known["php"] = []Comment{Comment{start: "/*", end: "*/"},
+		Comment{start: "//", end: "\n"}}
+	known["ruby"] = []Comment{Comment{start: "#", end: "\n"}}
 	known["shell"] = []Comment{Comment{start: "#", end: "\n"}}
+	known["swift"] = []Comment{Comment{start: "/*", end: "*/"},
+		Comment{start: "//", end: "\n"}}
 	known["sql"] = []Comment{Comment{start: "--", end: "\n"}}
+	known["xml"] = []Comment{Comment{start: "<!--", end: "-->"}}
 
 	// Ensure we have at least one filename specified.
 	if len(args) <= 0 {
@@ -144,7 +169,14 @@ func (cc *commentsCommand) Execute(args []string) int {
 		// Not found?  That's an error
 		if !ok {
 			fmt.Printf("Unknown style %s, valid options include:\n", kind)
+
+			keys := make([]string, 0, len(known))
 			for k := range known {
+				keys = append(keys, k)
+			}
+			sort.Strings(keys)
+
+			for _, k := range keys {
 				fmt.Printf("\t%s\n", k)
 			}
 			return 1
