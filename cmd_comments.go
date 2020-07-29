@@ -127,6 +127,7 @@ func (cc *commentsCommand) Execute(args []string) int {
 	known["lua"] = []Comment{Comment{start: "--[[", end: "--]]"},
 		Comment{start: "-- ", end: "\n"}}
 	known["shell"] = []Comment{Comment{start: "#", end: "\n"}}
+	known["sql"] = []Comment{Comment{start: "--", end: "\n"}}
 
 	// Ensure we have at least one filename specified.
 	if len(args) <= 0 {
