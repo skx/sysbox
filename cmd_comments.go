@@ -127,14 +127,18 @@ func (cc *commentsCommand) Execute(args []string) int {
 	known["apl"] = []Comment{Comment{start: "⍝", end: "\n"}}
 	known["applescript"] = []Comment{Comment{start: "(*", end: "*)"},
 		Comment{start: "--", end: "\n"}}
-
+	known["asm"] = []Comment{Comment{start: ";", end: "\n"}}
 	known["basic"] = []Comment{Comment{start: "REM", end: "\n"}}
 	known["c"] = []Comment{Comment{start: "//", end: "\n"}}
 	known["coldfusion"] = []Comment{Comment{start: "<!---", end: "--->"}}
 	known["cpp"] = []Comment{Comment{start: "/*", end: "*/"}}
+	known["go"] = []Comment{Comment{start: "/*", end: "*/"},
+		Comment{start: "//", end: "\n"},
+	}
 	known["html"] = []Comment{Comment{start: "<!--", end: "-->"}}
 	known["haskell"] = []Comment{Comment{start: "{-", end: "-}"},
 		Comment{start: "--", end: "\n"}}
+	known["lisp"] = []Comment{Comment{start: ";", end: "\n"}}
 	known["java"] = []Comment{Comment{start: "/*", end: "*/"},
 		Comment{start: "//", end: "\n"}}
 	known["javascript"] = []Comment{Comment{start: "/*", end: "*/"},
@@ -146,7 +150,10 @@ func (cc *commentsCommand) Execute(args []string) int {
 	known["pascal"] = []Comment{Comment{start: "(*", end: "*)"}}
 	known["perl"] = []Comment{Comment{start: "#", end: "\n"}}
 	known["php"] = []Comment{Comment{start: "/*", end: "*/"},
-		Comment{start: "//", end: "\n"}}
+		Comment{start: "//", end: "\n"},
+		Comment{start: "#", end: "\n"},
+	}
+	known["python"] = []Comment{Comment{start: "#", end: "\n"}}
 	known["ruby"] = []Comment{Comment{start: "#", end: "\n"}}
 	known["shell"] = []Comment{Comment{start: "#", end: "\n"}}
 	known["swift"] = []Comment{Comment{start: "/*", end: "*/"},
