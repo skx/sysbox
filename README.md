@@ -23,7 +23,8 @@ The idea here is to collect simple utilities and package them as a single binary
 Installation upon a system which already contains a go-compiler should be as simple as:
 
 ```
-$ go get github.com/skx/sysbox
+
+$ GO111MODULE=on go get github.com/skx/sysbox
 ```
 
 If you prefer you can find binary releases upon our [download page](https://github.com/skx/sysbox/releases).
@@ -79,7 +80,7 @@ Examples are included where useful.
 
 ## calc
 
-A simple calculator, which understands floating point-operations, unlinke `expr`.
+A simple calculator, which understands floating point-operations, unlike `expr`.
 
 The calculator supports either execution of sums via via the command-line, or as an interactive REPL environment:
 
