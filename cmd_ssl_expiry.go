@@ -2,20 +2,29 @@ package main
 
 import (
 	"crypto/tls"
+	"flag"
 	"fmt"
 	"net"
 	"regexp"
 	"strings"
 	"time"
-
-	"github.com/skx/subcommands"
 )
 
 // SSLExpiryCommand is the structure for our options and state.
 type SSLExpiryCommand struct {
 
-	// We embed the NoFlags option, because we accept no command-line flags.
-	subcommands.NoFlags
+	// Show time in hours (only)
+	hours bool
+
+	// Show time in days (only)
+	days bool
+}
+
+// Arguments adds per-command args to the object.
+func (s *SSLExpiryCommand) Arguments(f *flag.FlagSet) {
+	f.BoolVar(&s.hours, "hours", false, "Report only the number of hours until the certificate expires")
+	f.BoolVar(&s.days, "days", false, "Report only the number of days until the certificate expires")
+
 }
 
 // Info returns the name of this subcommand.
@@ -47,6 +56,8 @@ Report on an SMTP-certificate:
 // Execute runs our sub-command.
 func (s *SSLExpiryCommand) Execute(args []string) int {
 
+	ret := 0
+
 	//
 	// Ensure we have an argument
 	//
@@ -58,17 +69,28 @@ func (s *SSLExpiryCommand) Execute(args []string) int {
 	// For each argument
 	for _, arg := range args {
 
-		fmt.Printf("%s\n", arg)
-
 		hours, err := s.SSLExpiration(arg)
 		if err != nil {
 			fmt.Printf("\tERROR:%s\n", err.Error())
+			ret = 1
 		} else {
-			fmt.Printf("\t%d hours (%d days)\n", hours, hours/24)
+
+			// Output for scripting
+			if s.hours {
+				fmt.Printf("%s\t%d\thours\n", arg, hours)
+			}
+			if s.days {
+				fmt.Printf("%s\t%d\tdays\n", arg, hours/24)
+			}
+
+			// Output for humans
+			if !s.hours && !s.days {
+				fmt.Printf("%s\t%d hours\t%d days\n", arg, hours, hours/24)
+			}
 		}
 	}
 
-	return 0
+	return ret
 }
 
 // SSLExpiration returns the number of hours remaining for a given
