@@ -133,6 +133,10 @@ func (e *Evaluator) term() *Token {
 		op = e.peekToken()
 	}
 
+	if op.Type == ERROR {
+		return &Token{Type: ERROR, Value: fmt.Sprintf("Unexpected token inside term() - %v\n", op)}
+	}
+
 	return f1
 }
 
@@ -227,6 +231,10 @@ func (e *Evaluator) expr() *Token {
 		tok = e.peekToken()
 	}
 
+	if tok.Type == ERROR {
+		return &Token{Type: ERROR, Value: fmt.Sprintf("Unexpected token inside expr() - %v\n", tok)}
+	}
+
 	return t1
 }
 
@@ -309,7 +317,7 @@ func (e *Evaluator) Run() *Token {
 	var result *Token
 
 	// Process each statement
-	for e.peekToken().Type != EOF {
+	for e.peekToken().Type != EOF && e.peekToken().Type != ERROR {
 
 		// Get the result
 		result = e.expr()

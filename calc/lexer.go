@@ -173,21 +173,26 @@ func (l *Lexer) Next() *Token {
 
 			// Build up identifiers from any permitted
 			// character - which is just a-zA-Z
-			if !l.isIdentifierCharacter(l.input[end]) {
+			if l.isIdentifierCharacter(l.input[end]) {
+				end++
+			} else {
 				break
 			}
-
-			end++
 		}
 
+		// Change the position to be after the end of the identifier
+		// we found - if we didn't find one then that results in no
+		// change.
 		l.position = end
+
+		// Now record the text of the token (i.e. identifier).
 		token := l.input[start:end]
 
 		//
-		// In a real language/lexer we might have a lot
-		// of keywords/reserved-words.
+		// In a real language/lexer we might have
+		// keywords/reserved-words to handle.
 		//
-		// We only have to cope with "let".
+		// We only need to cope with "let".
 		//
 		// If the identifier was LET then return that
 		// token instead.
@@ -197,7 +202,24 @@ func (l *Lexer) Next() *Token {
 		}
 
 		//
-		// If it wasn't `let` it was an identifier.
+		// So we handled the easy cases, and then defaulted
+		// to looking for an identifier.
+		//
+		// If we failed to find one that means that we've got
+		// to skip the unknown character - to avoid an infinite
+		// the next time we try to move forwards - and report
+		// the error immediately.
+		//
+		if token == "" {
+			l.position++
+			return &Token{Value: fmt.Sprintf("unknown character %c", l.input[end]), Type: ERROR}
+		}
+
+		//
+		// We found a non-empty identifier, which
+		// wasn't converted into a  `let` keyword.
+		//
+		// Return it.
 		//
 		return &Token{Value: token, Type: IDENT}
 
