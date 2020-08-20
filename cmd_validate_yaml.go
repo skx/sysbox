@@ -135,10 +135,30 @@ func (vy *validateYAMLCommand) Execute(args []string) int {
 	path := "."
 
 	if len(args) > 0 {
-		path = args[0]
 
+		path = args[0]
 	}
 
+	// Check the entry we're given exists.
+	info, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		fmt.Printf("The path does not exist: %s\n", path)
+		return 1
+	}
+
+	// Error?
+	if err != nil {
+		fmt.Printf("Failed to stat(%s): %s\n", path, err.Error())
+		return 1
+	}
+
+	// Not a directory?
+	if !info.Mode().IsDir() {
+		fmt.Printf("The path is not a directory: %s\n", path)
+		return 1
+	}
+
+	// Run the validation
 	if vy.validateYAML(path) {
 		return 1
 	}
