@@ -289,12 +289,12 @@ Extract URLs from the named files, or STDIN.  URLs are parsed naively with a sim
 
 ## validate-json
 
-Validate `*.json` files from the current working-directory, or the named directory, recursively.
+Validate JSON files for correctness and syntax-errors.
 
 
 ## validate-yaml
 
-Validate `*.yaml`/`*.yml` files from the current working-directory, or the named directory, recursively.
+Validate YAML files for correctness and syntax-errors.
 
 
 ## with-lock
