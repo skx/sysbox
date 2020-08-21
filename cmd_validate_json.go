@@ -12,8 +12,13 @@ import (
 // Structure for our options and state.
 type validateJSONCommand struct {
 
-	// comma-separated list of files to exclude
+	// comma-separated list of files to exclude, as set by the
+	// command-line flag.
 	exclude string
+
+	// an array of patterns to exclude, calculated from the
+	// exclude setting above.
+	excluded []string
 
 	// Should we report on what we're testing.
 	verbose bool
@@ -22,7 +27,7 @@ type validateJSONCommand struct {
 // Arguments adds per-command args to the object.
 func (vj *validateJSONCommand) Arguments(f *flag.FlagSet) {
 	f.BoolVar(&vj.verbose, "verbose", false, "Should we be verbose")
-	f.StringVar(&vj.exclude, "exclude", "", "Comma-separated list of files to exclude")
+	f.StringVar(&vj.exclude, "exclude", "", "Comma-separated list of patterns to exclude files from the check")
 
 }
 
@@ -32,135 +37,138 @@ func (vj *validateJSONCommand) Info() (string, string) {
 
 Details:
 
-This command finds all files which match the pattern '*.json', and
-attempts to load them, validating syntax.
+This command allows you to validate JSON files, by default searching
+recursively beneath the current directory for all files which match
+the pattern '*.json'.
 
-By default the filesystem is walked from the current working directory,
-but if you prefer you may specify a starting-directory name as the single
-argument to the sub-command.`
-}
+If you prefer you may specify a number of directories or files:
 
-// validateJSON finds and tests all files beneath the named directory.
-func (vj *validateJSONCommand) validateJSON(path string) bool {
+- Any file specified will be checked.
+- Any directory specified will be recursively scanned for matching files.
+  - Files that do not have a '.json' suffix will be ignored.
 
-	//
-	// Did we see a failure?
-	//
-	fail := false
+Example:
 
-	//
-	// Find all files
-	//
-	files, err := FindFiles(path, []string{".json"})
-
-	//
-	// Failure?
-	//
-	if err != nil {
-		fmt.Printf("Error looking for files: %s\n", err.Error())
-		os.Exit(1)
-	}
-
-	//
-	// Split excluded files, if any
-	//
-	var excluded []string
-	if vj.exclude != "" {
-		excluded = strings.Split(vj.exclude, ",")
-	}
-
-	//
-	// Now we walk the list of files we're going to process,
-	// and we process each one.
-	//
-	for _, file := range files {
-
-		//
-		// We default to not excluding files.
-		//
-		exclude := false
-
-		//
-		// Exclude this file?
-		//
-		for _, ex := range excluded {
-
-			if strings.Contains(file, ex) {
-				exclude = true
-			}
-		}
-
-		if vj.verbose {
-			if exclude {
-				fmt.Printf("Excluded: %s\n", file)
-			} else {
-				fmt.Printf("Testing: %s\n", file)
-			}
-		}
-		if exclude {
-			continue
-		}
-
-		err := vj.validateFile(file)
-		if err != nil {
-			fmt.Printf("%s : %s\n", file, err.Error())
-			fail = true
-		}
-
-	}
-
-	return fail
+    $ sysbox validate-json -verbose file1.json file2.json ..
+    $ sysbox validate-json -exclude=foo /dir/1/path /file/1/path ..
+`
 }
 
 // Validate a single file
 func (vj *validateJSONCommand) validateFile(path string) error {
 
+	// Exclude this file? Based on the supplied list though?
+	for _, ex := range vj.excluded {
+		if strings.Contains(path, ex) {
+			if vj.verbose {
+				fmt.Printf("SKIPPED\t%s - matched '%s'\n", path, ex)
+			}
+			return nil
+		}
+	}
+
+	// Read the file-contents
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
 		return err
 	}
 
+	// Deserialize - receiving an error if that failed.
 	var result interface{}
 	err = json.Unmarshal(data, &result)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	// Show the error if there was one, but otherwise only show
+	// the success if running verbosely.
+	if err != nil {
+		fmt.Printf("ERROR\t%s - %s\n", path, err.Error())
+	} else {
+		if vj.verbose {
+			fmt.Printf("OK\t%s\n", path)
+		}
+	}
+	return err
 }
 
 // Execute is invoked if the user specifies `validate-json` as the subcommand.
 func (vj *validateJSONCommand) Execute(args []string) int {
 
-	path := "."
+	// Did we find at least one file with an error?
+	failed := false
 
-	if len(args) > 0 {
-		path = args[0]
-
+	// Create our array of excluded patterns if something
+	// should be excluded.
+	if vj.exclude != "" {
+		vj.excluded = strings.Split(vj.exclude, ",")
 	}
 
-	// Check the entry we're given exists.
-	info, err := os.Stat(path)
-	if os.IsNotExist(err) {
-		fmt.Printf("The path does not exist: %s\n", path)
+	// Add a fake argument if nothing is present, because we
+	// want to process the current directory (recursively) by default.
+	if len(args) < 1 {
+		args = append(args, ".")
+	}
+
+	// We can handle file/directory names as arguments.  If a
+	// directory is specified then we process it recursively.
+	//
+	// We'll start by building up a list of all the files to test,
+	// before we begin the process of testing.  We'll make sure
+	// our list is unique to cut down on any unnecessary I/O.
+	todo := make(map[string]bool)
+
+	// For each argument ..
+	for _, arg := range args {
+
+		// Check that it actually exists.
+		info, err := os.Stat(arg)
+		if os.IsNotExist(err) {
+			fmt.Printf("The path does not exist: %s\n", arg)
+			continue
+		}
+
+		// Error?
+		if err != nil {
+			fmt.Printf("Failed to stat(%s): %s\n", arg, err.Error())
+			continue
+		}
+
+		// A directory?
+		if info.Mode().IsDir() {
+
+			// Find suitable entries in the directory
+			files, err := FindFiles(arg, []string{".yaml", ".yml"})
+			if err != nil {
+				fmt.Printf("Error finding files in %s: %s\n", arg, err.Error())
+				continue
+			}
+
+			// Then record each one.
+			for _, ent := range files {
+				todo[ent] = true
+			}
+		} else {
+
+			// OK the entry we were given is just a file,
+			// so we'll save the path away.
+			todo[arg] = true
+		}
+	}
+
+	//
+	// Now we have a list of files to process.
+	//
+	for file := range todo {
+
+		// Run the validation, and note the result
+		err := vj.validateFile(file)
+		if err != nil {
+			failed = true
+		}
+	}
+
+	// Setup a suitable exit-code
+	if failed {
 		return 1
 	}
 
-	// Error?
-	if err != nil {
-		fmt.Printf("Failed to stat(%s): %s\n", path, err.Error())
-		return 1
-	}
-
-	// Not a directory?
-	if !info.Mode().IsDir() {
-		fmt.Printf("The path is not a directory: %s\n", path)
-		return 1
-	}
-
-	// Run the validation
-	if vj.validateJSON(path) {
-		return 1
-	}
 	return 0
 }
