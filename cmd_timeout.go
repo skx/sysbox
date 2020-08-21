@@ -26,7 +26,7 @@ func (t *timeoutCommand) Arguments(f *flag.FlagSet) {
 
 // Info returns the name of this subcommand.
 func (t *timeoutCommand) Info() (string, string) {
-	return "timeout", `Run a command, but terminate after the specified number of seconds.
+	return "timeout", `Run a command, with a timeout.
 
 Details:
 

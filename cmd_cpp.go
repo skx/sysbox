@@ -26,7 +26,7 @@ type cppCommand struct {
 
 // Info returns the name of this subcommand.
 func (c *cppCommand) Info() (string, string) {
-	return "cpp", `Trivial CPP-like preprocessor
+	return "cpp", `Trivial CPP-like preprocessor.
 
 Details:
 

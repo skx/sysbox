@@ -28,7 +28,7 @@ func (cs *chooseSTDINCommand) Arguments(f *flag.FlagSet) {
 
 // Info returns the name of this subcommand.
 func (cs *chooseSTDINCommand) Info() (string, string) {
-	return "choose-stdin", `Choose an item from STDIN, interactively
+	return "choose-stdin", `Choose an item from STDIN, interactively.
 
 Details:
 
