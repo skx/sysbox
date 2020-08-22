@@ -129,6 +129,8 @@ The chronic command is ideally suited to wrap cronjobs, it runs the command you 
 
 This is a simple utility which outputs the comments found in the files named upon the command-line.  Supported comments include C-style single-line comments (prefixed with `//`), C++-style multi-line comments (between `/*` and `*/`), and shell-style comments prefixed with `#`.
 
+Used for submitting pull-requests to projects about typos - as discussed [here upon my blog](https://blog.steve.fi/i_m_a_bit_of_a_git__hacker__.html).
+
 
 ## collapse
 
