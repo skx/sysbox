@@ -135,7 +135,7 @@ func (vj *validateJSONCommand) Execute(args []string) int {
 		if info.Mode().IsDir() {
 
 			// Find suitable entries in the directory
-			files, err := FindFiles(arg, []string{".yaml", ".yml"})
+			files, err := FindFiles(arg, []string{".json"})
 			if err != nil {
 				fmt.Printf("Error finding files in %s: %s\n", arg, err.Error())
 				continue
