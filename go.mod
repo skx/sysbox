@@ -3,7 +3,6 @@ module github.com/skx/sysbox
 go 1.14
 
 require (
-	github.com/PuerkitoBio/goquery v1.5.1 // indirect
 	github.com/RoaringBitmap/roaring v0.5.1 // indirect
 	github.com/anacrolix/dht/v2 v2.6.1 // indirect
 	github.com/anacrolix/go-libutp v1.0.3 // indirect
@@ -17,7 +16,6 @@ require (
 	github.com/gdamore/tcell v1.4.0
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/google/goexpect v0.0.0-20200816234442-b5b77125c2c5
-	github.com/google/goterm v0.0.0-20190703233501-fc88cf888a3f // indirect
 	github.com/hashicorp/go-immutable-radix v1.2.0 // indirect
 	github.com/hashicorp/go-msgpack v1.1.5 // indirect
 	github.com/hashicorp/go-multierror v1.1.0 // indirect
@@ -25,7 +23,6 @@ require (
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/memberlist v0.2.2
 	github.com/huandu/xstrings v1.3.2 // indirect
-	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/miekg/dns v1.1.31 // indirect
 	github.com/mschoch/smat v0.2.0 // indirect
