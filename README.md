@@ -294,6 +294,11 @@ Extract URLs from the named files, or STDIN.  URLs are parsed naively with a sim
 Validate JSON files for correctness and syntax-errors.
 
 
+## validate-xml
+
+Validate XML files for correctness and syntax-errors.
+
+
 ## validate-yaml
 
 Validate YAML files for correctness and syntax-errors.

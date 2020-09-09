@@ -54,6 +54,7 @@ func main() {
 	subcommands.Register(&treeCommand{})
 	subcommands.Register(&urlsCommand{})
 	subcommands.Register(&validateJSONCommand{})
+	subcommands.Register(&validateXMLCommand{})
 	subcommands.Register(&validateYAMLCommand{})
 	subcommands.Register(&withLockCommand{})
 
