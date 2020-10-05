@@ -64,6 +64,9 @@ If you prefer you can handle assignments without "let":
 // Show the result of a calculation
 func (c *calcCommand) showResult(out *calc.Token) error {
 
+	if out == nil {
+		return fmt.Errorf("nil result")
+	}
 	if out.Type == calc.ERROR {
 		return fmt.Errorf("error: %s", out.Value.(string))
 	}
