@@ -26,7 +26,7 @@ type tocItem struct {
 }
 
 // String converts the tocItem to a string
-func (self tocItem) String() string {
+func (t tocItem) String() string {
 
 	// Characters dropped from anchors
 	droppedChars := []string{
@@ -41,7 +41,7 @@ func (self tocItem) String() string {
 	}
 
 	// link is lowercase
-	link := strings.ToLower(self.content)
+	link := strings.ToLower(t.content)
 
 	// Remove the characters
 	for _, c := range droppedChars {
@@ -53,8 +53,8 @@ func (self tocItem) String() string {
 	link = "#" + link
 
 	return fmt.Sprintf("%v* [%v](%v) \n",
-		strings.Repeat(" ", 2*(self.depth-1)),
-		self.content,
+		strings.Repeat(" ", 2*(t.depth-1)),
+		t.content,
 		link)
 }
 
@@ -91,7 +91,7 @@ func (m *markdownTOCCommand) process(reader *bufio.Reader) error {
 			}
 
 			// Print it
-			fmt.Printf(item.String())
+			fmt.Print(item.String())
 		}
 	}
 
