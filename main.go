@@ -49,6 +49,7 @@ func main() {
 	subcommands.Register(&httpGetCommand{})
 	subcommands.Register(&installCommand{})
 	subcommands.Register(&ipsCommand{})
+	subcommands.Register(&markdownTOCCommand{})
 	subcommands.Register(&passwordCommand{})
 	subcommands.Register(&peerdCommand{})
 	subcommands.Register(&runDirectoryCommand{})
