@@ -234,6 +234,12 @@ than trying to parse `ip -4 addr list`, although that is also the
 common approach.
 
 
+## markdown-toc
+
+This tool creates a simple Markdown table-of-contents, which is useful
+for the `README.md` files as used on github.
+
+
 ## make-password
 
 This tool generates a single random password each time it is executed, it is designed to be quick and simple to use, rather than endlessly configurable.
