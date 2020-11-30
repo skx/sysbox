@@ -132,6 +132,7 @@ func (cc *commentsCommand) Execute(args []string) int {
 	known["c"] = []Comment{Comment{start: "//", end: "\n"}}
 	known["coldfusion"] = []Comment{Comment{start: "<!---", end: "--->"}}
 	known["cpp"] = []Comment{Comment{start: "/*", end: "*/"}}
+	known["fortran"] = []Comment{Comment{start: "!", end: "\n"}}
 	known["go"] = []Comment{Comment{start: "/*", end: "*/"},
 		Comment{start: "//", end: "\n"},
 	}
