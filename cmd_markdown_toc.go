@@ -2,18 +2,17 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"os"
 	"strings"
-
-	"github.com/skx/subcommands"
 )
 
 // Structure for our options and state.
 type markdownTOCCommand struct {
 
-	// We embed the NoFlags option, because we accept no command-line flags.
-	subcommands.NoFlags
+	// Maximum level to include.
+	max int
 }
 
 // tocItem holds state for a single entry
@@ -58,6 +57,12 @@ func (t tocItem) String() string {
 		link)
 }
 
+// Arguments adds per-command args to the object.
+func (m *markdownTOCCommand) Arguments(f *flag.FlagSet) {
+	f.IntVar(&m.max, "max", 100, "The maximum nesting level to generate.")
+
+}
+
 // Info returns the name of this subcommand.
 func (m *markdownTOCCommand) Info() (string, string) {
 	return "markdown-toc", `Create a table-of-contents for a markdown file.
@@ -82,7 +87,9 @@ func (m *markdownTOCCommand) process(reader *bufio.Reader) error {
 	for fileScanner.Scan() {
 		line := fileScanner.Text()
 
-		if headerCount := m.countHashes(line); headerCount > 0 {
+		headerCount := m.countHashes(line)
+
+		if headerCount >= 1 && headerCount < m.max {
 
 			// Create an item for this header
 			item := tocItem{
