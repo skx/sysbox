@@ -207,6 +207,13 @@ For examples please consult the output of `sysbox help expect`, but a simple exa
 A trivial finger-server.
 
 
+## html2text
+
+A simple tool for converting from HTML to Text, added when I realized I'd
+connected to a system over `ssh` and there were no console viewers installed,
+(such as `lynx`, `links`, or `w3m`).
+
+
 ## httpd
 
 A simple HTTP-server.  Allows serving to localhost, or to the local LAN.
