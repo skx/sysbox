@@ -25,6 +25,9 @@ type Comment struct {
 	//
 	// For C++ this might be `*/`, for a shell-script it might be `\n`.
 	end string
+
+	// Some comment-openers are only valid at the start of a line.
+	bol bool
 }
 
 // Structure for our options and state.
@@ -102,7 +105,17 @@ func (cc *commentsCommand) dumpComments(filename string) {
 	// Convert our internal patterns to a series of regular expressions.
 	var r []*regexp.Regexp
 	for _, pattern := range cc.patterns {
-		reg := "(?s)" + regexp.QuoteMeta(pattern.start) + "(.*?)" + regexp.QuoteMeta(pattern.end)
+		reg := "(?s)"
+
+		if pattern.bol {
+			reg += "^"
+		}
+
+		reg += regexp.QuoteMeta(pattern.start)
+		reg += "(.*?)"
+		reg += regexp.QuoteMeta(pattern.end)
+
+		fmt.Printf("%v\n", reg)
 		r = append(r, regexp.MustCompile(reg))
 	}
 
@@ -132,7 +145,7 @@ func (cc *commentsCommand) Execute(args []string) int {
 	known["c"] = []Comment{Comment{start: "//", end: "\n"}}
 	known["coldfusion"] = []Comment{Comment{start: "<!---", end: "--->"}}
 	known["cpp"] = []Comment{Comment{start: "/*", end: "*/"}}
-	known["fortran"] = []Comment{Comment{start: "!", end: "\n"}}
+	known["fortran"] = []Comment{Comment{start: "!", end: "\n", bol: true}}
 	known["go"] = []Comment{Comment{start: "/*", end: "*/"},
 		Comment{start: "//", end: "\n"},
 	}
