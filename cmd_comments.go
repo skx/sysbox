@@ -136,44 +136,44 @@ func (cc *commentsCommand) Execute(args []string) int {
 	known := make(map[string][]Comment)
 
 	// Populate with the patterns.
-	known["ada"] = []Comment{Comment{start: "--", end: "\n"}}
-	known["apl"] = []Comment{Comment{start: "⍝", end: "\n"}}
-	known["applescript"] = []Comment{Comment{start: "(*", end: "*)"},
-		Comment{start: "--", end: "\n"}}
-	known["asm"] = []Comment{Comment{start: ";", end: "\n"}}
-	known["basic"] = []Comment{Comment{start: "REM", end: "\n"}}
-	known["c"] = []Comment{Comment{start: "//", end: "\n"}}
-	known["coldfusion"] = []Comment{Comment{start: "<!---", end: "--->"}}
-	known["cpp"] = []Comment{Comment{start: "/*", end: "*/"}}
-	known["fortran"] = []Comment{Comment{start: "!", end: "\n", bol: true}}
-	known["go"] = []Comment{Comment{start: "/*", end: "*/"},
-		Comment{start: "//", end: "\n"},
+	known["ada"] = []Comment{{start: "--", end: "\n"}}
+	known["apl"] = []Comment{{start: "⍝", end: "\n"}}
+	known["applescript"] = []Comment{{start: "(*", end: "*)"},
+		{start: "--", end: "\n"}}
+	known["asm"] = []Comment{{start: ";", end: "\n"}}
+	known["basic"] = []Comment{{start: "REM", end: "\n"}}
+	known["c"] = []Comment{{start: "//", end: "\n"}}
+	known["coldfusion"] = []Comment{{start: "<!---", end: "--->"}}
+	known["cpp"] = []Comment{{start: "/*", end: "*/"}}
+	known["fortran"] = []Comment{{start: "!", end: "\n", bol: true}}
+	known["go"] = []Comment{{start: "/*", end: "*/"},
+		{start: "//", end: "\n"},
 	}
-	known["html"] = []Comment{Comment{start: "<!--", end: "-->"}}
-	known["haskell"] = []Comment{Comment{start: "{-", end: "-}"},
-		Comment{start: "--", end: "\n"}}
-	known["lisp"] = []Comment{Comment{start: ";", end: "\n"}}
-	known["java"] = []Comment{Comment{start: "/*", end: "*/"},
-		Comment{start: "//", end: "\n"}}
-	known["javascript"] = []Comment{Comment{start: "/*", end: "*/"},
-		Comment{start: "//", end: "\n"}}
-	known["lua"] = []Comment{Comment{start: "--[[", end: "--]]"},
-		Comment{start: "-- ", end: "\n"}}
-	known["matlab"] = []Comment{Comment{start: "%{", end: "%}"},
-		Comment{start: "% ", end: "\n"}}
-	known["pascal"] = []Comment{Comment{start: "(*", end: "*)"}}
-	known["perl"] = []Comment{Comment{start: "#", end: "\n"}}
-	known["php"] = []Comment{Comment{start: "/*", end: "*/"},
-		Comment{start: "//", end: "\n"},
-		Comment{start: "#", end: "\n"},
+	known["html"] = []Comment{{start: "<!--", end: "-->"}}
+	known["haskell"] = []Comment{{start: "{-", end: "-}"},
+		{start: "--", end: "\n"}}
+	known["lisp"] = []Comment{{start: ";", end: "\n"}}
+	known["java"] = []Comment{{start: "/*", end: "*/"},
+		{start: "//", end: "\n"}}
+	known["javascript"] = []Comment{{start: "/*", end: "*/"},
+		{start: "//", end: "\n"}}
+	known["lua"] = []Comment{{start: "--[[", end: "--]]"},
+		{start: "-- ", end: "\n"}}
+	known["matlab"] = []Comment{{start: "%{", end: "%}"},
+		{start: "% ", end: "\n"}}
+	known["pascal"] = []Comment{{start: "(*", end: "*)"}}
+	known["perl"] = []Comment{{start: "#", end: "\n"}}
+	known["php"] = []Comment{{start: "/*", end: "*/"},
+		{start: "//", end: "\n"},
+		{start: "#", end: "\n"},
 	}
-	known["python"] = []Comment{Comment{start: "#", end: "\n"}}
-	known["ruby"] = []Comment{Comment{start: "#", end: "\n"}}
-	known["shell"] = []Comment{Comment{start: "#", end: "\n"}}
-	known["swift"] = []Comment{Comment{start: "/*", end: "*/"},
-		Comment{start: "//", end: "\n"}}
-	known["sql"] = []Comment{Comment{start: "--", end: "\n"}}
-	known["xml"] = []Comment{Comment{start: "<!--", end: "-->"}}
+	known["python"] = []Comment{{start: "#", end: "\n"}}
+	known["ruby"] = []Comment{{start: "#", end: "\n"}}
+	known["shell"] = []Comment{{start: "#", end: "\n"}}
+	known["swift"] = []Comment{{start: "/*", end: "*/"},
+		{start: "//", end: "\n"}}
+	known["sql"] = []Comment{{start: "--", end: "\n"}}
+	known["xml"] = []Comment{{start: "<!--", end: "-->"}}
 
 	// Ensure we have at least one filename specified.
 	if len(args) <= 0 {
