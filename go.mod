@@ -3,19 +3,15 @@ module github.com/skx/sysbox
 go 1.14
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.3.3 // indirect
 	github.com/RoaringBitmap/roaring v0.5.5 // indirect
 	github.com/anacrolix/dht/v2 v2.7.0 // indirect
-	github.com/anacrolix/go-libutp v1.0.3 // indirect
 	github.com/anacrolix/log v0.7.1-0.20200604014615-c244de44fd2d
-	github.com/anacrolix/multiless v0.0.0-20200413040533-acfd16f65d5d // indirect
 	github.com/anacrolix/torrent v1.18.1
 	github.com/armon/go-metrics v0.3.4 // indirect
 	github.com/benbjohnson/immutable v0.2.1 // indirect
 	github.com/creack/pty v1.1.11
 	github.com/dustin/go-humanize v1.0.0
 	github.com/elliotchance/orderedmap v1.3.0 // indirect
-	github.com/gdamore/tcell v1.4.0
 	github.com/gdamore/tcell/v2 v2.0.1-0.20201017141208-acf90d56d591
 	github.com/golang/protobuf v1.4.3 // indirect
 	github.com/golang/snappy v0.0.2 // indirect
@@ -26,14 +22,11 @@ require (
 	github.com/hashicorp/go-msgpack v1.1.5 // indirect
 	github.com/hashicorp/go-multierror v1.1.0 // indirect
 	github.com/hashicorp/go-sockaddr v1.0.2 // indirect
-	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/memberlist v0.2.2
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/lucas-clemente/quic-go v0.18.1 // indirect
 	github.com/marten-seemann/qtls-go1-15 v0.1.1 // indirect
-	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/miekg/dns v1.1.35 // indirect
-	github.com/mschoch/smat v0.2.0 // indirect
 	github.com/nightlyone/lockfile v1.0.0
 	github.com/philhofer/fwd v1.1.0 // indirect
 	github.com/pion/dtls/v2 v2.0.3 // indirect
@@ -46,16 +39,13 @@ require (
 	github.com/skx/subcommands v0.9.1
 	github.com/tinylib/msgp v1.1.3 // indirect
 	github.com/willf/bitset v1.1.11 // indirect
-	go.etcd.io/bbolt v1.3.5 // indirect
 	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
-	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b // indirect
+	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b
 	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9 // indirect
 	golang.org/x/sys v0.0.0-20201109165425-215b40eba54c // indirect
 	golang.org/x/text v0.3.4 // indirect
 	golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e // indirect
-	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/genproto v0.0.0-20201110150050-8816d57aaa9a // indirect
 	google.golang.org/grpc v1.33.2 // indirect
-	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/yaml.v2 v2.3.0
 )
