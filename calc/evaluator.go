@@ -330,6 +330,11 @@ func (e *Evaluator) Run() *Token {
 		// Otherwise loop again.
 	}
 
+	// Did we terminate on an error?
+	if e.peekToken().Type == ERROR {
+		return e.peekToken()
+	}
+
 	// All done.
 	return result
 }
