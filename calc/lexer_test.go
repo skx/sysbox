@@ -67,7 +67,7 @@ func TestNumbers(t *testing.T) {
 		{"-3", false, ""},
 		{".1", false, ""},
 		{".1.1", true, "too many"},
-		{"12-3", true, "only appear at the start"},
+		{"$", true, "unknown character"},
 		{fmaxStr, true, "failed to parse number"},
 	}
 
@@ -131,5 +131,20 @@ func TestIssue15(t *testing.T) {
 		if fmt.Sprintf("%v", tok.Value) != tt.expectedLiteral {
 			t.Fatalf("tests[%d] - Literal wrong, expected=%q, got=%q", i, tt.expectedLiteral, tok.Value)
 		}
+	}
+}
+
+func TestNumeric(t *testing.T) {
+
+	lexer := NewLexer("bogus stuff")
+
+	ok := lexer.isNumberComponent('-', true)
+	if !ok {
+		t.Fatalf("leading '-' wasn't handled")
+	}
+
+	ok = lexer.isNumberComponent('-', false)
+	if ok {
+		t.Fatalf("'-' isn't valid unless at the start of a number")
 	}
 }

@@ -124,7 +124,7 @@ func (l *Lexer) Next() *Token {
 			// out of our input.
 			for end < len(l.input) {
 
-				if !l.isNumberComponent(l.input[end]) {
+				if !l.isNumberComponent(l.input[end], end == start) {
 					break
 				}
 				end++
@@ -139,13 +139,6 @@ func (l *Lexer) Next() *Token {
 			bits := strings.Split(token, ".")
 			if len(bits) > 2 {
 				return &Token{Type: ERROR, Value: fmt.Sprintf("too many periods in '%s'", token)}
-			}
-
-			// We can only have a "-" at the start of the number
-			for idx, chr := range token {
-				if chr == rune('-') && idx != 0 {
-					return &Token{Type: ERROR, Value: fmt.Sprintf("- can only appear at the start of a number, fond: %s", token)}
-				}
 			}
 
 			// Convert to float64
@@ -245,17 +238,23 @@ func (l *Lexer) isIdentifierCharacter(d byte) bool {
 }
 
 // isNumberComponent looks for characters that can make up integers/floats
-func (l *Lexer) isNumberComponent(d byte) bool {
+//
+// We handle the first-character specially, which is why that's an argument
+func (l *Lexer) isNumberComponent(d byte, first bool) bool {
 
 	// digits
 	if d >= '0' && d <= '9' {
 		return true
 	}
 
-	// negative/floating-point numbers
-	if d == '-' || d == '.' {
+	// floating-point numbers
+	if d == '.' {
 		return true
 	}
 
+	// negative sign can only occur at the start of the input
+	if d == '-' && first {
+		return true
+	}
 	return false
 }
