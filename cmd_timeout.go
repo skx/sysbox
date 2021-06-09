@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/creack/pty"
-	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/term"
 )
 
 // Structure for our options and state.
@@ -65,11 +65,11 @@ func (t *timeoutCommand) Execute(args []string) int {
 	defer func() { _ = ptmx.Close() }()
 
 	// Set stdin in raw mode.
-	oldState, err := terminal.MakeRaw(int(os.Stdin.Fd()))
+	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
 	if err != nil {
 		panic(err)
 	}
-	defer func() { _ = terminal.Restore(int(os.Stdin.Fd()), oldState) }() // Best effort.
+	defer func() { _ = term.Restore(int(os.Stdin.Fd()), oldState) }() // Best effort.
 
 	// Copy stdin to the pty and the pty to stdout/stderr.
 	//
