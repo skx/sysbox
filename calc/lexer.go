@@ -1,13 +1,19 @@
+// lexer.go - Contains our simple lexer, which returns tokens from
+// our input.
+//
+// These are NOT parsed into an AST, instead they are directly exected
+// by the evaluator.
+
 package calc
 
 import (
 	"fmt"
 	"strconv"
 	"strings"
+	"unicode"
 )
 
-// These constants are used to return the type of
-// token which has been lexed.
+// These constants are used to describe the type of token which has been lexed.
 const (
 	// Basic token-types
 	EOF    = "EOF"
@@ -64,8 +70,7 @@ func NewLexer(input string) *Lexer {
 	// Create the lexer object.
 	l := &Lexer{input: input}
 
-	// Populate the simple token-types in a map for
-	// later use.
+	// Populate the simple token-types in a map for later use.
 	l.known = make(map[string]string)
 	l.known["*"] = MULTIPLY
 	l.known["+"] = PLUS
@@ -107,7 +112,7 @@ func (l *Lexer) Next() *Token {
 			l.position++
 			continue
 
-			// Is it a digit?
+			// Is it a potential number?
 		case "-", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".":
 
 			//
@@ -165,7 +170,9 @@ func (l *Lexer) Next() *Token {
 		for end < len(l.input) {
 
 			// Build up identifiers from any permitted
-			// character - which is just a-zA-Z
+			// character.
+			//
+			// We allow unicode "letters" only.
 			if l.isIdentifierCharacter(l.input[end]) {
 				end++
 			} else {
@@ -196,12 +203,13 @@ func (l *Lexer) Next() *Token {
 
 		//
 		// So we handled the easy cases, and then defaulted
-		// to looking for an identifier.
+		// to looking for our only supported identifier.
 		//
 		// If we failed to find one that means that we've got
 		// to skip the unknown character - to avoid an infinite
-		// the next time we try to move forwards - and report
-		// the error immediately.
+		// loop.
+		//
+		// We'll skip over the character, and return the error.
 		//
 		if token == "" {
 			l.position++
@@ -210,7 +218,7 @@ func (l *Lexer) Next() *Token {
 
 		//
 		// We found a non-empty identifier, which
-		// wasn't converted into a  `let` keyword.
+		// wasn't converted into a `let` keyword.
 		//
 		// Return it.
 		//
@@ -229,12 +237,7 @@ func (l *Lexer) Next() *Token {
 // valid for use in an identifier.
 func (l *Lexer) isIdentifierCharacter(d byte) bool {
 
-	if (d >= 'a' && d <= 'z') ||
-		(d >= 'A' && d <= 'Z') {
-		return true
-	}
-
-	return false
+	return (unicode.IsLetter(rune(d)))
 }
 
 // isNumberComponent looks for characters that can make up integers/floats
@@ -243,11 +246,11 @@ func (l *Lexer) isIdentifierCharacter(d byte) bool {
 func (l *Lexer) isNumberComponent(d byte, first bool) bool {
 
 	// digits
-	if d >= '0' && d <= '9' {
+	if unicode.IsDigit(rune(d)) {
 		return true
 	}
 
-	// floating-point numbers
+	// floating-point numbers require the use of "."
 	if d == '.' {
 		return true
 	}
@@ -256,5 +259,7 @@ func (l *Lexer) isNumberComponent(d byte, first bool) bool {
 	if d == '-' && first {
 		return true
 	}
+
+	// No, this is not part of a number.
 	return false
 }
