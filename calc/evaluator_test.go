@@ -124,6 +124,13 @@ func TestErrorCases(t *testing.T) {
 		{"let foo = ( 1 + 2 * 3 ", "expected ')'"},
 		{")", "Unexpected token inside factor"},
 		{"3.3.3", "too many periods"},
+		{"3 / 3 + $", "Unexpected token inside factor"},
+		{"3 + 3 $", "Unexpected token inside term"},
+
+		// eof
+		{"3 + ", "unexpected EOF in factor"},
+		{"3 + 3 / ", "unexpected EOF in factor"},
+		{"3 + 3 * ", "unexpected EOF in factor"},
 
 		// `let` is a LET token, not a generic identifier.
 		{"let let = 3", " is not an identifier"},
