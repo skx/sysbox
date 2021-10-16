@@ -80,7 +80,7 @@ Examples are included where useful.
 
 ## calc
 
-A simple calculator, which understands floating point-operations, unlike `expr`.
+A simple calculator, which understands floating point-operations, unlike `expr`, and has some simple line-editing facilities built into its REPL-mode.
 
 The calculator supports either execution of sums via via the command-line, or as an interactive REPL environment:
 
@@ -91,11 +91,16 @@ $ sysbox calc 3.1 + 2.7
 $ sysbox calc
 calc> let a = 1/3
 0.333333
-calc> a * 9
+calc> result * 9
 3
+calc> result * 9
+27
 calc> exit
 $
 ```
+
+Here you see the magic variable `result` is always updated to store the value of the previous calculation.
+
 
 ## choose-file
 
