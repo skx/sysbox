@@ -226,7 +226,7 @@ func (c *calcCommand) Execute(args []string) int {
 			//
 			// Show the result.
 			//
-			err := c.showResult(out)
+			err = c.showResult(out)
 			if err != nil {
 				fmt.Printf("error: %s\n", err)
 			}
