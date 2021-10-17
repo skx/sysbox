@@ -11,11 +11,12 @@ require (
 	github.com/google/goexpect v0.0.0-20210430020637-ab937bf7fd6f
 	github.com/hashicorp/memberlist v0.2.4
 	github.com/nightlyone/lockfile v1.0.0
+	github.com/peterh/liner v1.2.1
 	github.com/rivo/tview v0.0.0-20210608105643-d4fb0348227b
 	github.com/skx/subcommands v0.9.1
-	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
+	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a // indirect
 	golang.org/x/net v0.0.0-20210525063256-abc453219eb5
 	golang.org/x/sys v0.0.0-20210608053332-aa57babbf139 // indirect
-	golang.org/x/term v0.0.0-20210503060354-a79de5458b56 // indirect
+	golang.org/x/term v0.0.0-20210503060354-a79de5458b56
 	gopkg.in/yaml.v2 v2.4.0
 )

@@ -335,6 +335,9 @@ func (e *Evaluator) Run() *Token {
 		return e.peekToken()
 	}
 
+	// We'll save the result in a magic variable "result"
+	e.variables["result"] = result.Value.(float64)
+
 	// All done.
 	return result
 }

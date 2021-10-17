@@ -1,10 +1,17 @@
 #!/bin/sh
 
-# Install tools to test our code-quality, if missing.
-type golint  2>/dev/null >/dev/null  || go get -u golang.org/x/lint/golint
-type shadow  2>/dev/null >/dev/null  || go get -u golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow
-type staticcheck 2>/dev/null >/dev/null || go get -u honnef.co/go/tools/cmd/staticcheck
-
+# Install the tools we use to test our code-quality.
+#
+# Here we setup the tools to install only if the "CI" environmental variable
+# is not empty.  This is because locally I have them installed.
+#
+# NOTE: Github Actions always set CI=true
+#
+if [ ! -z "${CI}" ] ; then
+    go install golang.org/x/lint/golint@latest
+    go install golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow@latest
+    go install honnef.co/go/tools/cmd/staticcheck@latest
+fi
 
 # Run the static-check tool.
 t=$(mktemp)

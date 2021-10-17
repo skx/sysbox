@@ -1,12 +1,11 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"log"
-	"os"
+	"io"
 	"strings"
 
+	"github.com/peterh/liner"
 	"github.com/skx/subcommands"
 	"github.com/skx/sysbox/calc"
 )
@@ -58,7 +57,15 @@ If you prefer you can handle assignments without "let":
    3
    calc> a + b * c
    7
-   calc> exit`
+   calc> exit
+
+The result of the previous calculation is always stored in the variable 'result':
+
+   calc> 1 / 3
+   0.3333
+   calc> result * 3
+   1
+`
 }
 
 // Show the result of a calculation
@@ -68,7 +75,7 @@ func (c *calcCommand) showResult(out *calc.Token) error {
 		return fmt.Errorf("nil result")
 	}
 	if out.Type == calc.ERROR {
-		return fmt.Errorf("error: %s", out.Value.(string))
+		return fmt.Errorf("%s", out.Value.(string))
 	}
 	if out.Type != calc.NUMBER {
 		return fmt.Errorf("unexpected output (not a number): %v", out)
@@ -144,34 +151,67 @@ func (c *calcCommand) Execute(args []string) int {
 	}
 
 	//
-	// Repl.
+	// Repl uses command-history
 	//
-	scanner := bufio.NewScanner(os.Stdin)
+	line := liner.NewLiner()
+	defer line.Close()
 
 	//
-	// Show the prompt and read the lines
+	// Tab completion
 	//
-	fmt.Printf("calc> ")
-	for scanner.Scan() {
+	complete := []string{"exit", "help", "result", "quit"}
 
-		//
-		// Get the input, and trim it
-		//
-		input := scanner.Text()
-		input = strings.TrimSpace(input)
-
-		//
-		// Exit ?
-		//
-		if strings.HasPrefix(input, "exit") ||
-			strings.HasPrefix(input, "quit") {
-			return 0
+	line.SetCompleter(func(line string) (c []string) {
+		for _, n := range complete {
+			if strings.HasPrefix(n, strings.ToLower(line)) {
+				c = append(c, n)
+			}
 		}
+		return
+	})
+	//
+	// Ctrl-C will abort input of a line, not the whole program.
+	//
+	line.SetCtrlCAborts(false)
 
-		//
-		// Ignore it, unless it is non-empty
-		//
-		if input != "" {
+	//
+	// Loop until we should stop
+	//
+	run := true
+	for run {
+
+		input, err := line.Prompt("calc>")
+		if err == nil {
+
+			//
+			// Trim the input
+			//
+			input = strings.TrimSpace(input)
+
+			//
+			// Exit ?
+			//
+			if strings.HasPrefix(input, "exit") ||
+				strings.HasPrefix(input, "quit") {
+				run = false
+				continue
+			}
+
+			//
+			// Help ?
+			//
+			if strings.HasPrefix(input, "help") {
+				_, txt := c.Info()
+				fmt.Printf("%s\n", txt)
+				continue
+			}
+
+			//
+			// Is the input empty?
+			//
+			if input == "" {
+				continue
+			}
 
 			//
 			// Load the script
@@ -186,20 +226,25 @@ func (c *calcCommand) Execute(args []string) int {
 			//
 			// Show the result.
 			//
-			err := c.showResult(out)
+			err = c.showResult(out)
 			if err != nil {
 				fmt.Printf("error: %s\n", err)
 			}
 
+			//
+			// Add the input to our history.
+			//
+			// NOTE: Our history is deliberately not persisted.
+			//
+			line.AppendHistory(input)
 		}
 
-		// Show the prompt again, before looping back for
-		// more input.
-		fmt.Printf("calc> ")
-	}
+		// Ctrl-d
+		if io.EOF == err {
+			run = false
+			fmt.Printf("\n")
+		}
 
-	if err := scanner.Err(); err != nil {
-		log.Println(err)
 	}
 
 	//
