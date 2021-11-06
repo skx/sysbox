@@ -318,6 +318,11 @@ Validate JSON files for correctness and syntax-errors.
 Validate XML files for correctness and syntax-errors.
 
 
+## version
+
+Report the version of the binary, when downloaded from our [release page](https://github.com/skx/sysbox/releases).
+
+
 ## validate-yaml
 
 Validate YAML files for correctness and syntax-errors.

@@ -33,6 +33,6 @@ for OS in ${BUILD_PLATFORMS[@]}; do
         export CGO_ENABLED=0
 
         # Build the main-binary
-        go build -ldflags "-X main.version=$(git describe --tags 2>/dev/null || echo 'master')" -o "${BASE}-${SUFFIX}"
+        go build -ldflags "-X main.versionString=$(git describe --tags 2>/dev/null || echo 'master')" -o "${BASE}-${SUFFIX}"
     done
 done

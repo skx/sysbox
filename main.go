@@ -62,6 +62,7 @@ func main() {
 	subcommands.Register(&validateJSONCommand{})
 	subcommands.Register(&validateXMLCommand{})
 	subcommands.Register(&validateYAMLCommand{})
+	subcommands.Register(&versionCommand{})
 	subcommands.Register(&withLockCommand{})
 
 	//
