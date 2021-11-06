@@ -48,7 +48,6 @@ func main() {
 	subcommands.Register(&html2TextCommand{})
 	subcommands.Register(&httpdCommand{})
 	subcommands.Register(&httpGetCommand{})
-	subcommands.Register(&installCommand{})
 	subcommands.Register(&ipsCommand{})
 	subcommands.Register(&markdownTOCCommand{})
 	subcommands.Register(&passwordCommand{})

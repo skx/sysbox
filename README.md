@@ -18,21 +18,32 @@ This repository is the spiritual successor to my previous [sysadmin-utils reposi
 
 The idea here is to collect simple utilities and package them as a single binary, written in go, in a similar fashion to the `busybox` utility.
 
+
+
+
 ## Installation
 
 Installation upon a system which already contains a go-compiler should be as simple as:
 
 ```
-
-$ GO111MODULE=on go get github.com/skx/sysbox
+$ go install github.com/skx/sysbox@latest
 ```
 
-If you prefer you can find binary releases upon our [download page](https://github.com/skx/sysbox/releases).
+If you've cloned [this repository](https://github.com/skx/sysbox) then the following will suffice:
+
+```
+$ go build .
+$ go install .
+```
+
+Finally may find binary releases for various systems upon our [download page](https://github.com/skx/sysbox/releases).
+
+
 
 
 ## Bash Completion
 
-The [subcommand library](https://github.com/skx/subcommands) this application uses has integrated support for the generation of bash completion scripts.
+The [subcommand library](https://github.com/skx/subcommands) this application uses has integrated support for the generation of a completion script for the bash shell.
 
 To enable this add the following to your bash configuration-file:
 
@@ -42,9 +53,11 @@ source <(sysbox bash-completion)
 ```
 
 
+
+
 # Overview
 
-This application is built, and distributed, as a single-binary named`sysbox`, which implements a number of sub-commands.
+This application is built, and distributed, as a single-binary named `sysbox`, which implements a number of sub-commands.
 
 You can either run the tools individually, taking advantage of the [bash completion](#bash-completion) support to complete the subcommands and their arguments:
 
@@ -53,13 +66,10 @@ You can either run the tools individually, taking advantage of the [bash complet
 
 Or you can create symlinks to allow specific tool to be executed without the need to specify a subcommand:
 
-    $ ln -s sysbox foo
-    $ foo ..
+    $ ln -s $(which sysbox) /usr/local/bin/calc
+    $ /usr/local/bin/calc '3 * 3'
+    9
 
-This process of creating symlinks can be automated via the use of the `sysbox install` sub-command, which would allow you to install the tools globally like so:
-
-    $ go get github.com/skx/sysbox
-    $ $GOPATH/bin/sysbox install -binary $GOPATH/bin/sysbox -directory /usr/local/bin | sudo sh
 
 
 
@@ -227,15 +237,6 @@ A simple HTTP-server.  Allows serving to localhost, or to the local LAN.
 ## http-get
 
 Very much "curl-lite", allows you to fetch the contents of a remote URL.  SSL errors, etc, are handled, but only minimal options are supported.
-
-
-## install
-
-This command allows you to install symlinks to the sysbox-binary, for ease of use:
-
-```
-$ sysbox install -binary=$(pwd)/sysbox -directory=~/bin | sh
-```
 
 
 ## ips
