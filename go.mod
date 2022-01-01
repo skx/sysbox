@@ -24,7 +24,7 @@ require (
 	github.com/nightlyone/lockfile v1.0.0
 	github.com/peterh/liner v1.2.1
 	github.com/rivo/tview v0.0.0-20211001102648-5508f4b00266
-	github.com/skx/subcommands v0.9.1
+	github.com/skx/subcommands v0.9.2
 	github.com/stretchr/testify v1.7.0 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f
