@@ -3,6 +3,8 @@ package main
 //go:generate echo Hello, Go Generate!
 import (
 	"fmt"
+	"runtime/debug"
+	"strings"
 
 	"github.com/skx/subcommands"
 )
@@ -37,6 +39,17 @@ Usage:
 func (t *versionCommand) Execute(args []string) int {
 
 	fmt.Printf("%s\n", versionString)
+
+	// Show VCS information
+	info, ok := debug.ReadBuildInfo()
+
+	if ok {
+		for _, settings := range info.Settings {
+			if strings.Contains(settings.Key, "vcs") {
+				fmt.Printf("%s: %s\n", settings.Key, settings.Value)
+			}
+		}
+	}
 
 	return 0
 }
