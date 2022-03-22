@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/anacrolix/log"
 	"github.com/anacrolix/torrent"
 	"github.com/dustin/go-humanize"
 	"github.com/skx/subcommands"
@@ -74,7 +73,7 @@ func (s *torrentCommand) Execute(args []string) int {
 	// Ensure we have only a single argument.
 	//
 	if len(args) != 1 {
-		fmt.Printf("You must specify a single magnet link")
+		fmt.Printf("You must specify a magnet link to download\n")
 		return 1
 	}
 
@@ -90,7 +89,6 @@ func (s *torrentCommand) Execute(args []string) int {
 	// Create the default client-configuration.
 	//
 	clientConfig := torrent.NewDefaultClientConfig()
-	clientConfig.Logger = log.Discard
 
 	//
 	// Create the client.
