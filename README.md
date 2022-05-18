@@ -289,15 +289,6 @@ Ideal for https-servers, but also TLS-protected SMTP hosts, etc.
 Run a command, but kill it after the given number of seconds.  The command is executed with a PTY so you can run interactive things such as `top`, `mutt`, etc.
 
 
-## torrent
-
-Simple bittorrent client, which allows downloading a magnet-based torrent.  For example to download an Ubuntu ISO:
-
-```
-$ sysbox torrent magnet:?xt=urn:btih:ZOCMZQIPFFW7OLLMIC5HUB6BPCSDEOQU
-```
-
-
 ## tree
 
 Trivial command to display the contents of a filesystem, as a nested tree.  This is similar to the standard `tree` command, without the nesting and ASCII graphics.
