@@ -44,6 +44,7 @@ func main() {
 	subcommands.Register(&envTemplateCommand{})
 	subcommands.Register(&expectCommand{})
 	subcommands.Register(&execSTDINCommand{})
+	subcommands.Register(&findCommand{})
 	subcommands.Register(&fingerdCommand{})
 	subcommands.Register(&html2TextCommand{})
 	subcommands.Register(&httpdCommand{})

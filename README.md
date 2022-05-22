@@ -217,6 +217,22 @@ For examples please consult the output of `sysbox help expect`, but a simple exa
 ```
 
 
+## find
+
+The find sub-command allows finding files/directories that match a given number
+of regular expressions.  Basic usage is:
+
+    $ sysbox find foo bar$
+
+By default the names of files are shown, but you can view either files, directories, or both.  The starting point will be the current working directory, but `-path` can be used to change that:
+
+    $ sysbox find -path /etc -files=true -directories=true '(i?)magic'
+    /etc/ImageMagick-6/magic.xml
+    /etc/magic
+    /etc/magic.mime
+    /etc/sane.d/magicolor.conf
+
+
 ## fingerd
 
 A trivial finger-server.
