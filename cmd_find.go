@@ -123,9 +123,7 @@ func (fc *findCommand) Execute(args []string) int {
 	// Build up the list of patterns
 	//
 	patterns := []string{}
-	for _, arg := range args {
-		patterns = append(patterns, arg)
-	}
+	patterns = append(patterns, args...)
 
 	//
 	// Ensure we have a least one.
