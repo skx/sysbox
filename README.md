@@ -305,6 +305,13 @@ Ideal for https-servers, but also TLS-protected SMTP hosts, etc.
 Run a command, but kill it after the given number of seconds.  The command is executed with a PTY so you can run interactive things such as `top`, `mutt`, etc.
 
 
+## todo
+
+A command to look for TODO items which contain dates in the past, the idea
+being that you can record notes for yourself, along with deadlines, in your
+code.  Later you can see which deadlines have been exceeded.
+
+
 ## tree
 
 Trivial command to display the contents of a filesystem, as a nested tree.  This is similar to the standard `tree` command, without the nesting and ASCII graphics.
