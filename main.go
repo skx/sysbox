@@ -57,6 +57,7 @@ func main() {
 	subcommands.Register(&splayCommand{})
 	subcommands.Register(&SSLExpiryCommand{})
 	subcommands.Register(&timeoutCommand{})
+	subcommands.Register(&todoCommand{})
 	subcommands.Register(&treeCommand{})
 	subcommands.Register(&urlsCommand{})
 	subcommands.Register(&validateJSONCommand{})
