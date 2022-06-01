@@ -201,7 +201,7 @@ func (t *todoCommand) Execute(args []string) int {
 
 	// Create the capture regexp
 	var err error
-	t.reg, err = regexp.Compile("\\(([0-9/]+)\\)")
+	t.reg, err = regexp.Compile(`\(([0-9/]+)\)`)
 	if err != nil {
 		fmt.Printf("internal error compiling regular expression:%s\n", err)
 		return 1
