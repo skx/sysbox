@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -91,7 +90,7 @@ func (rd *runDirectoryCommand) RunParts(directory string) {
 	//
 	// Find the files beneath the named directory.
 	//
-	files, err := ioutil.ReadDir(directory)
+	files, err := os.ReadDir(directory)
 	if err != nil {
 		fmt.Printf("error reading directory contents %s - %s\n", directory, err)
 		os.Exit(1)

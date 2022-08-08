@@ -4,7 +4,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"regexp"
@@ -22,7 +21,7 @@ func between(in string, begin string, end string) string {
 	if strings.HasPrefix(in, "|") {
 		content, err = runCommand(strings.TrimPrefix(in, "|"))
 	} else {
-		content, err = ioutil.ReadFile(in)
+		content, err = os.ReadFile(in)
 	}
 
 	if err != nil {
@@ -87,7 +86,7 @@ func grep(in string, pattern string) string {
 	if strings.HasPrefix(in, "|") {
 		content, err = runCommand(strings.TrimPrefix(in, "|"))
 	} else {
-		content, err = ioutil.ReadFile(in)
+		content, err = os.ReadFile(in)
 	}
 
 	if err != nil {
@@ -119,7 +118,7 @@ func include(in string) string {
 	if strings.HasPrefix(in, "|") {
 		content, err = runCommand(strings.TrimPrefix(in, "|"))
 	} else {
-		content, err = ioutil.ReadFile(in)
+		content, err = os.ReadFile(in)
 	}
 
 	if err != nil {

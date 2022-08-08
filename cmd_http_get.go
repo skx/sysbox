@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"sort"
 )
@@ -60,7 +60,7 @@ func (hg *httpGetCommand) Execute(args []string) int {
 
 	// Get the body.
 	defer response.Body.Close()
-	contents, err := ioutil.ReadAll(response.Body)
+	contents, err := io.ReadAll(response.Body)
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 		return 1

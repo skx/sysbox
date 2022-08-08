@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"sync"
 	"time"
@@ -56,7 +55,7 @@ func (p *peerdCommand) writePeers(members []*memberlist.Node) {
 	//
 	// Write to disk
 	//
-	err = ioutil.WriteFile("/var/tmp/peerd.json", out, 0644)
+	err = os.WriteFile("/var/tmp/peerd.json", out, 0644)
 	if err != nil {
 		fmt.Printf("error writing JSON to file %s\n", err.Error())
 		os.Exit(1)

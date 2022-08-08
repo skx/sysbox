@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -67,7 +66,7 @@ func (vy *validateYAMLCommand) validateFile(path string) error {
 	}
 
 	// Read the file-contents
-	data, err := ioutil.ReadFile(path)
+	data, err := os.ReadFile(path)
 	if err != nil {
 		return err
 	}

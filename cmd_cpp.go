@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"regexp"
@@ -84,7 +83,7 @@ func (c *cppCommand) process(reader *bufio.Reader) {
 				//
 				// Now we should have a file to include
 				//
-				dat, derr := ioutil.ReadFile(file)
+				dat, derr := os.ReadFile(file)
 				if derr != nil {
 					fmt.Printf("error including: %s - %s\n", file, derr.Error())
 					return

@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"regexp"
 	"sort"
 	"strings"
@@ -96,7 +96,7 @@ func (cc *commentsCommand) showComment(comment string) {
 func (cc *commentsCommand) dumpComments(filename string) {
 
 	// Read the content
-	content, err := ioutil.ReadFile(filename)
+	content, err := os.ReadFile(filename)
 	if err != nil {
 		fmt.Printf("error reading %s: %s\n", filename, err.Error())
 		return

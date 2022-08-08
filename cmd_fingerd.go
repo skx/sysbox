@@ -5,8 +5,8 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"net"
+	"os"
 	"os/user"
 	"strconv"
 )
@@ -102,7 +102,7 @@ func (fc *fingerdCommand) getUserInfo(usr string) ([]byte, error) {
 	if e != nil {
 		return nil, e
 	}
-	data, err := ioutil.ReadFile(u.HomeDir + "/.plan")
+	data, err := os.ReadFile(u.HomeDir + "/.plan")
 	if err != nil {
 		return data, errors.New("user doesn't have a .plan file")
 	}
