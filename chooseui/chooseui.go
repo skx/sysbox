@@ -127,8 +127,38 @@ func (ui *ChooseUI) Choose() string {
 	//
 	// Global keyboard handler, use "TAB" to switch focus.
 	//
+	// Arrows and HOME/END work as expected regardless of focus-state
+	//
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
+
+		// Home
+		case tcell.KeyHome:
+			list.SetCurrentItem(0)
+
+		// End
+		case tcell.KeyEnd:
+			list.SetCurrentItem(list.GetItemCount())
+
+		// Up arrow
+		case tcell.KeyUp:
+			selected := list.GetCurrentItem()
+			if selected > 0 {
+				selected--
+			} else {
+				selected = list.GetItemCount()
+			}
+			list.SetCurrentItem(selected)
+			return nil
+
+		// Down arrow
+		case tcell.KeyDown:
+			selected := list.GetCurrentItem()
+			selected++
+			list.SetCurrentItem(selected)
+			return nil
+
+		// TAB
 		case tcell.KeyTab, tcell.KeyBacktab:
 			if list.HasFocus() {
 				app.SetFocus(inputField)
@@ -137,6 +167,7 @@ func (ui *ChooseUI) Choose() string {
 			}
 			return nil
 
+		// Escape
 		case tcell.KeyEscape:
 			app.Stop()
 		}
