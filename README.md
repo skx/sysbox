@@ -342,6 +342,11 @@ Report the version of the binary, when downloaded from our [release page](https:
 Validate YAML files for correctness and syntax-errors.
 
 
+## watch
+
+Execute the same command constantly, with a small delay.  Useful to observe a command-completing.
+
+
 ## with-lock
 
 Allow running a command with a lock-file to prevent parallel executions.

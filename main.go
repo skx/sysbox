@@ -7,9 +7,7 @@ import (
 	"github.com/skx/subcommands"
 )
 
-//
 // Recovery is good
-//
 func recoverPanic() {
 	if os.Getenv("DEBUG") != "" {
 		return
@@ -21,9 +19,7 @@ func recoverPanic() {
 	}
 }
 
-//
 // Register the subcommands, and run the one the user chose.
-//
 func main() {
 
 	//
@@ -64,6 +60,7 @@ func main() {
 	subcommands.Register(&validateXMLCommand{})
 	subcommands.Register(&validateYAMLCommand{})
 	subcommands.Register(&versionCommand{})
+	subcommands.Register(&watchCommand{})
 	subcommands.Register(&withLockCommand{})
 
 	//
