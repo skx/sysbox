@@ -115,6 +115,7 @@ func (cs *chooseSTDINCommand) Execute(args []string) int {
 		//
 		// And we're done
 		//
+		fmt.Printf("%s\n", out)
 		return 0
 
 	}
