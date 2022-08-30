@@ -128,17 +128,15 @@ func (cf *chooseFileCommand) Execute(args []string) int {
 		}
 
 		//
-		// Show the output
-		//
-		fmt.Printf("%s", out)
-
-		//
-		// Otherwise we're done
+		// And we're done
 		//
 		return 0
 
 	}
 
+	//
+	// We're not executing, so show the user's choice
+	//
 	fmt.Printf("%s\n", choice)
 	return 0
 }
