@@ -1,20 +1,31 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"os/exec"
 	"runtime"
+	"strings"
 	"time"
 
-	"github.com/skx/subcommands"
+	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
 )
 
 // Structure for our options and state.
 type watchCommand struct {
 
-	// We embed the NoFlags option, because we accept no command-line flags.
-	subcommands.NoFlags
+	// delay contains the number of seconds to sleep before updating our command
+	delay int
+
+	// count increments once every second
+	count int
+}
+
+// Arguments adds per-command args to the object.
+func (w *watchCommand) Arguments(f *flag.FlagSet) {
+	f.IntVar(&w.delay, "n", 5, "The number of seconds to sleep before re-running the specified command.")
 }
 
 // Info returns the name of this subcommand.
@@ -41,53 +52,138 @@ hack.
 `
 }
 
-// clearScreen clears the screen, in a horrid fashion.
-func (w *watchCommand) clearScreen() {
-	switch runtime.GOOS {
-	case "windows":
-		w.runCmd("cmd", "/c", "cls")
-	default:
-		w.runCmd("clear")
-	}
-}
-
-// runCmd runs a command.
-func (w *watchCommand) runCmd(name string, arg ...string) {
-	cmd := exec.Command(name, arg...)
-	cmd.Stdout = os.Stdout
-	cmd.Run()
-}
-
 // Execute is invoked if the user specifies `watch` as the subcommand.
 func (w *watchCommand) Execute(args []string) int {
 
 	if len(args) < 1 {
-		fmt.Printf("Usage: watch cmd arg1 arg2 .. argN")
+		fmt.Printf("Usage: watch cmd arg1 arg2 .. argN\n")
 		return 1
 	}
 
-	// Run forever..
-	for {
+	// Command we're going to run
+	command := strings.Join(args, " ")
 
-		// clear the screen, horridly
-		w.clearScreen()
+	// Start time so that
+	startTime := time.Now()
 
-		// Run the command
-		cmd := exec.Command(args[0], args[1:]...)
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		err := cmd.Run()
-		if err != nil {
-			fmt.Printf("cmd.Run() failed with %s\n", err)
-			return 1
-		}
+	// Assume Unix
+	shell := "/bin/sh -c"
 
-		// Rerun after a delay of five seconds
-		time.Sleep(5 * time.Second)
+	switch runtime.GOOS {
+	case "windows":
+		shell = "cmd /c"
 	}
 
-	//
-	// All done
-	//
+	// Build up the thing to run
+	sh := strings.Split(shell, " ")
+	sh = append(sh, command)
+
+	// Create the screen
+	screen, err := tcell.NewScreen()
+	if err != nil {
+		panic(err)
+	}
+	err = screen.Init()
+	if err != nil {
+		panic(err)
+	}
+
+	// Create the application
+	app := tview.NewApplication()
+	app.SetScreen(screen)
+
+	// Create the viewing-area
+	viewer := tview.NewTextView()
+	viewer.SetScrollable(true)
+	viewer.SetBackgroundColor(tcell.ColorDefault)
+
+	// Create an elapsed time record
+	elapsed := tview.NewTextView()
+	elapsed.SetTextColor(tcell.ColorBlack)
+	elapsed.SetTextAlign(tview.AlignRight)
+	elapsed.SetText("0s")
+	elapsed.SetBackgroundColor(tcell.ColorGreen)
+
+	// Setup a title
+	title := tview.NewTextView()
+	title.SetTextColor(tcell.ColorBlack)
+	title.SetText(fmt.Sprintf("%s every %ds", command, w.delay))
+	title.SetBackgroundColor(tcell.ColorGreen)
+
+	// The status-bar will have the title and elapsed time
+	statusBar := tview.NewFlex()
+	statusBar.AddItem(title, 0, 1, false)
+	statusBar.AddItem(elapsed, 15, 1, false)
+
+	// The layout will have the status-bar
+	flex := tview.NewFlex().SetDirection(tview.FlexRow)
+	flex.AddItem(viewer, 0, 1, true)
+	flex.AddItem(statusBar, 1, 1, false)
+	app.SetRoot(flex, true)
+
+	// Ensure we update
+	go func() {
+		run := true
+
+		for {
+
+			// Run the command if we should, either:
+			//
+			//  1.  The first time we start.
+			//
+			//  2. When the timer has exceeded our second-count
+			if run {
+
+				// Run the command and get the output
+				cmd := exec.Command(sh[0], sh[1:]...)
+				out, err := cmd.CombinedOutput()
+				if err != nil {
+					app.Stop()
+					fmt.Printf("Error running command: %v - %s\n", sh, err)
+					os.Exit(1)
+				}
+
+				// Once we've done that we're all ready to update the screen
+				app.QueueUpdateDraw(func() {
+
+					// Clear the screen
+					screen.Clear()
+
+					// Update the main-window's output
+					viewer.SetText(tview.TranslateANSI(string(out)))
+
+					// And update our run-time log
+					elapsed.SetText(fmt.Sprintf("%v", time.Since(startTime).Round(time.Second)))
+				})
+
+				run = false
+			} else {
+
+				// Otherwise just update the status-bars elapsed timer.
+				app.QueueUpdateDraw(func() {
+					elapsed.SetText(fmt.Sprintf("%v", time.Since(startTime).Round(time.Second)))
+				})
+			}
+
+			// We sleep for a second, and want to reset the to-run flag when we've done that
+			// enough times.
+			w.count++
+			if w.count >= w.delay {
+				w.count = 0
+				run = true
+			}
+
+			// delay before the next test.
+			time.Sleep(time.Second)
+		}
+	}()
+
+	// Run the application
+	err = app.Run()
+	if err != nil {
+		fmt.Printf("Error in watch:%s\n", err)
+		return 1
+	}
+
 	return 0
 }
