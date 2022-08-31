@@ -16,10 +16,10 @@ import (
 // Structure for our options and state.
 type watchCommand struct {
 
-	// delay contains the number of seconds to sleep before updating our command
+	// delay contains the number of seconds to sleep before updating our command.
 	delay int
 
-	// count increments once every second
+	// count increments once every second.
 	count int
 }
 
@@ -35,20 +35,17 @@ func (w *watchCommand) Info() (string, string) {
 Details:
 
 This command allows you execute a command every five seconds,
-and see the output.
+and see the most recent output.
 
 It is included because Mac OS does not include a watch-command
 by default.
 
-Notes:
+The display uses the tview text-based user interface package, to
+present a somewhat graphical display - complete with an updating
+run-timer.
 
-Between executing the specified command the utility will
-clear thes creen by executing 'cls' or 'clear', which is
-a terrible approach.
+To exit the application you may press 'q', 'Escape', or Ctrl-c.
 
-In the future this command might be reimplemented using
-a TUI instead, to avoid this, but for the moment it is a quick
-hack.
 `
 }
 
@@ -96,6 +93,19 @@ func (w *watchCommand) Execute(args []string) int {
 	viewer := tview.NewTextView()
 	viewer.SetScrollable(true)
 	viewer.SetBackgroundColor(tcell.ColorDefault)
+
+	//
+	// If the user presses 'q' or Esc in the viewer then exit
+	//
+	viewer.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if event.Key() == tcell.KeyEscape {
+			app.Stop()
+		}
+		if event.Rune() == 'q' {
+			app.Stop()
+		}
+		return event
+	})
 
 	// Create an elapsed time record
 	elapsed := tview.NewTextView()
