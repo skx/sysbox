@@ -21,6 +21,10 @@ type watchCommand struct {
 
 	// count increments once every second.
 	count int
+
+	// This can be set in the keyboard handler, and will trigger an immediate re-run
+	// of the command, without disturbing the regularly scheduled update(s).
+	immediately bool
 }
 
 // Arguments adds per-command args to the object.
@@ -104,6 +108,10 @@ func (w *watchCommand) Execute(args []string) int {
 		if event.Rune() == 'q' {
 			app.Stop()
 		}
+		if event.Rune() == ' ' {
+			// A space will trigger a re-run the next second
+			w.immediately = true
+		}
 		return event
 	})
 
@@ -142,11 +150,16 @@ func (w *watchCommand) Execute(args []string) int {
 			//  1.  The first time we start.
 			//
 			//  2. When the timer has exceeded our second-count
-			if run {
+			if run || w.immediately {
+
+				// Command output
+				var out []byte
 
 				// Run the command and get the output
 				cmd := exec.Command(sh[0], sh[1:]...)
-				out, err := cmd.CombinedOutput()
+
+				// Get the output.
+				out, err = cmd.CombinedOutput()
 				if err != nil {
 					app.Stop()
 					fmt.Printf("Error running command: %v - %s\n", sh, err)
@@ -181,6 +194,12 @@ func (w *watchCommand) Execute(args []string) int {
 			if w.count >= w.delay {
 				w.count = 0
 				run = true
+			}
+
+			// The user can press the space-bar to trigger an immediate run,
+			// reset the flag that would have been set in that case.
+			if w.immediately {
+				w.immediately = false
 			}
 
 			// delay before the next test.
