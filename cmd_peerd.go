@@ -53,9 +53,9 @@ func (p *peerdCommand) writePeers(members []*memberlist.Node) {
 	}
 
 	//
-	// Write to disk
+	// Write to disk the current members of the mesh.
 	//
-	err = os.WriteFile("/var/tmp/peerd.json", out, 0644)
+	err = os.WriteFile(p.stateFile, out, 0644)
 	if err != nil {
 		fmt.Printf("error writing JSON to file %s\n", err.Error())
 		os.Exit(1)
@@ -83,12 +83,16 @@ type peerdCommand struct {
 
 	// Our public IP
 	ip string
+
+	// The path to our state file
+	stateFile string
 }
 
 // Arguments adds per-command args to the object.
 func (p *peerdCommand) Arguments(f *flag.FlagSet) {
-	f.StringVar(&p.ip, "ip", "", "Our public-facing IP address")
 
+	f.StringVar(&p.ip, "ip", "", "Our public-facing IP address")
+	f.StringVar(&p.stateFile, "state", "/var/tmp/peerd.json", "The file within which to store peer members")
 }
 
 // Info returns the name of this subcommand.
@@ -99,7 +103,8 @@ Details:
 
 This command works as a daemon, keeping in constant contact with a set
 of peers.  Peers that are known and "up" are tracked and stored in the
-JSON file '/var/tmp/peerd.json'.
+JSON file '/var/tmp/peerd.json'.  You may specify an alternative location
+via the -state flag
 
 Usage:
 
