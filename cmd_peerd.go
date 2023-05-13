@@ -182,7 +182,16 @@ Now launch on the a second host, giving the IP of at least one peer:
 Both hosts will know about the other, and will update their local state
 file if the other host goes away, or new hosts join.
 
-Firewalling:
+
+Notifications:
+
+You can configure a (shell) command to execute when peers join, or leave,
+the peer network via '-run-up' and '-run-down'.  Within those commands
+$IP and $NAME will be expanded to contain the appropriate detail of the
+remote peer which has joined/left the group.
+
+
+Firewalling considerations:
 
 The communication happens over port 7946.`
 }
