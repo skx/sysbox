@@ -17,11 +17,17 @@ type withLockCommand struct {
 
 	// prefix is the directory-root beneath which we write our lockfile.
 	prefix string
+
+	// lockFile contains the name of the user-supplied lockfile to use,
+	// if this is set then one will not be constructed automatically
+	// and prefix will be ignored.
+	lockFile string
 }
 
 // Arguments adds per-command args to the object.
 func (wl *withLockCommand) Arguments(f *flag.FlagSet) {
 	f.StringVar(&wl.prefix, "prefix", "/var/tmp", "The location beneath which to write our lockfile")
+	f.StringVar(&wl.lockFile, "lock", "", "Specify a lockfile here directly, fully-qualified, if you don't want an auto-constructed one.")
 }
 
 // Info returns the name of this subcommand.
@@ -41,7 +47,12 @@ Implementation:
 
 A filename is constructed based upon the command to be executed, and
 this is used to prevent the concurrent execution.  The command, and
-arguments, to be executed are passed through a SHA1 hash for consistency.`
+arguments, to be executed are passed through a SHA1 hash for consistency.
+
+The -lock flag may be used to supply a fully-qualified lockfile path,
+in the case where a lockfile collision might be expected - in that case
+the -prefix argument is ignored.
+`
 }
 
 // Execute is invoked if the user specifies `with-lock` as the subcommand.
@@ -65,23 +76,36 @@ func (wl *withLockCommand) Execute(args []string) int {
 	hash := fmt.Sprintf("%x", h.Sum(nil))
 
 	//
+	// The actual path will go here
+	//
+	path := filepath.Join(wl.prefix, string(hash))
+
+	//
+	// If the user specified a complete path then that will
+	// be used instead.
+	//
+	if wl.lockFile != "" {
+		path = wl.lockFile
+	}
+
+	//
 	// Create the lockfile
 	//
-	lock, err := lockfile.New(filepath.Join(wl.prefix, string(hash)))
+	lock, err := lockfile.New(path)
 	if err != nil {
-		fmt.Printf("Cannot init lock. reason: %v", err)
+		fmt.Printf("Cannot init lockfile (%s). reason: %v", path, err)
 		return 1
 	}
 
 	// Error handling is essential, as we only try to get the lock.
 	if err = lock.TryLock(); err != nil {
-		fmt.Printf("Cannot lock %q, reason: %v", lock, err)
+		fmt.Printf("Cannot lock %q (%s), reason: %v", lock, path, err)
 		return 1
 	}
 
 	defer func() {
 		if errr := lock.Unlock(); errr != nil {
-			fmt.Printf("Cannot unlock %q, reason: %v", lock, errr)
+			fmt.Printf("Cannot unlock %q (%s), reason: %v", lock, path, errr)
 			os.Exit(1)
 		}
 	}()
