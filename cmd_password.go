@@ -18,6 +18,9 @@ type passwordCommand struct {
 
 	// Digits?
 	digits bool
+
+	// Confusing characters?
+	collide bool
 }
 
 // Arguments adds per-command args to the object.
@@ -25,6 +28,7 @@ func (p *passwordCommand) Arguments(f *flag.FlagSet) {
 	f.IntVar(&p.length, "length", 15, "The length of the password to generate")
 	f.BoolVar(&p.specials, "specials", true, "Should we use special characters?")
 	f.BoolVar(&p.digits, "digits", true, "Should we use digits?")
+	f.BoolVar(&p.collide, "ambiguous", false, "Should we allow ambiguous characters (0O1lI8B5S2ZD)?")
 }
 
 // Info returns the name of this subcommand.
@@ -43,11 +47,24 @@ func (p *passwordCommand) Execute(args []string) int {
 	rand.Seed(time.Now().UnixNano())
 
 	// Alphabets we use for generation
-	digits := "0123456789"
+	//
+	// Notice that some items are removed as "ambiguous":
+	//
+	//     0O1lI8B5S2ZD
+	//
+	digits := "34679"
 	specials := "~=&+%^*/()[]{}/!@#$?|"
-	all := "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
-		"abcdefghijklmnopqrstuvwxyz"
+	upper := "ACEFGHJKLMNPQRTUVWXY"
+	lower := "abcdefghijkmnopqrstuvwxyz"
 
+	// Reinstate the missing characters, if we need to.
+	if p.collide {
+		digits = "0123456789"
+		upper = "ABCDEFGHIJKLMNOPQRSTUVWXY"
+		lower = "abcdefghijklmnopqrstuvwxy"
+	}
+
+	all := upper + lower
 	// Extend our alphabet if we should
 	if p.digits {
 		all = all + digits
