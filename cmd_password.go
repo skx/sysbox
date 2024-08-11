@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"math/rand"
-	"time"
 )
 
 // Structure for our options and state.
@@ -44,7 +43,6 @@ flags if necessary.`
 
 // Execute is invoked if the user specifies `make-password` as the subcommand.
 func (p *passwordCommand) Execute(args []string) int {
-	rand.Seed(time.Now().UnixNano())
 
 	// Alphabets we use for generation
 	//
