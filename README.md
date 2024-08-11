@@ -274,13 +274,6 @@ for the `README.md` files as used on github.
 This tool generates a single random password each time it is executed, it is designed to be quick and simple to use, rather than endlessly configurable.
 
 
-## peerd
-
-This deamon provides the ability to maintain a local list of available cluster-members, via the JSON file located at `/var/tmp/peerd.json`.
-
-See the usage-information for more (`sysbox help peerd`).
-
-
 ## run-directory
 
 Run every executable in the given directory, optionally terminate if any command returns a non-zero exit-code.
