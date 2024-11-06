@@ -49,9 +49,6 @@ natural usage you may specify as the first argument:
 // Execute is invoked if the user specifies `splay` as the subcommand.
 func (s *splayCommand) Execute(args []string) int {
 
-	// Ensure we seed our random number generator.
-	rand.Seed(time.Now().UnixNano())
-
 	// If the user gave an argument then use it.
 	//
 	// Because people might expect this to work.
