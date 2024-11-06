@@ -62,13 +62,19 @@ is used in the format-string.
 // Process each specified feed.
 func (r *rssCommand) processFeed(url string) error {
 
+	// Create the parser with defaults
 	fp := gofeed.NewParser()
+
+	// Parse the feed
 	feed, err := fp.ParseURL(url)
 	if err != nil {
 		return err
 	}
 
+	// For each entry
 	for _, ent := range feed.Items {
+
+		// Get a piece of text, using our format-string
 		txt := os.Expand(
 			r.format,
 			func(s string) string {
@@ -91,9 +97,12 @@ func (r *rssCommand) processFeed(url string) error {
 			},
 		)
 
+		// Now show it
 		fmt.Println(txt)
 	}
-	return err
+
+	// All good.
+	return nil
 }
 
 // Execute is invoked if the user specifies `rss` as the subcommand.
