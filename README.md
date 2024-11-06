@@ -12,12 +12,13 @@
 * [Github Setup](#github-setup)
 
 
+
+
 # SysBox
 
 This repository is the spiritual successor to my previous [sysadmin-utils repository](https://github.com/skx/sysadmin-util)
 
 The idea here is to collect simple utilities and package them as a single binary, written in go, in a similar fashion to the `busybox` utility.
-
 
 
 
@@ -37,7 +38,6 @@ $ go install .
 ```
 
 Finally may find binary releases for various systems upon our [download page](https://github.com/skx/sysbox/releases).
-
 
 
 
@@ -88,6 +88,7 @@ More complete help for each command should be available like so:
 Examples are included where useful.
 
 
+
 ## calc
 
 A simple calculator, which understands floating point-operations, unlike `expr`, and has some simple line-editing facilities built into its REPL-mode.
@@ -112,6 +113,7 @@ $
 Here you see the magic variable `result` is always updated to store the value of the previous calculation.
 
 
+
 ## choose-file
 
 This subcommand presents a console-based UI to select a file.  The file selected will be displayed upon STDOUT.  The list may be filtered via an input-field.
@@ -126,6 +128,7 @@ Useful for launching videos, emulators, etc:
 The first form is preferred, because if the selection is canceled nothing happens.  In the second-case `xine` would be launched with no argument.
 
 
+
 ## choose-stdin
 
 Almost identical to `choose-file`, but instead of allowing the user to choose from a filename it allows choosing from the contents read on STDIN.  For example you might allow choosing a directory:
@@ -135,9 +138,11 @@ $ find ~/Repos -type d | sysbox choose-stdin -execute="firefox {}"
 ```
 
 
+
 ## chronic
 
 The chronic command is ideally suited to wrap cronjobs, it runs the command you specify as a child process and hides the output produced __unless__ that process exits with a non-zero exit-code.
+
 
 
 ## comments
@@ -145,6 +150,7 @@ The chronic command is ideally suited to wrap cronjobs, it runs the command you 
 This is a simple utility which outputs the comments found in the files named upon the command-line.  Supported comments include C-style single-line comments (prefixed with `//`), C++-style multi-line comments (between `/*` and `*/`), and shell-style comments prefixed with `#`.
 
 Used for submitting pull-requests to projects about typos - as discussed [here upon my blog](https://blog.steve.fi/i_m_a_bit_of_a_git__hacker__.html).
+
 
 
 ## collapse
@@ -155,6 +161,7 @@ This is a simple tool which will read STDIN, and output the content without any 
 * Empty lines will be skipped entirely.
 
 
+
 ## cpp
 
 Something _like_ the C preprocessor, but supporting only the ability to include files, and run commands via `#include` and `#execute` respectively:
@@ -163,6 +170,7 @@ Something _like_ the C preprocessor, but supporting only the ability to include 
     #execute ls -l | wc -l
 
 See also `env-template` which allows more flexibility in running commands, and including files (or parts of files) via templates.
+
 
 
 ## env-template
@@ -185,6 +193,7 @@ see it is possible to execute arbitrary commands and read their output.  This fa
 See also `cpp` for a less flexible alternative which is useful for mere file inclusion and command-execution.
 
 
+
 ## exec-stdin
 
 Read STDIN, and allow running a command for each line.  You can refer to
@@ -197,6 +206,7 @@ $ ps -ef | sysbox exec-stdin echo field1:{1} field2:{2} line:{}
 ```
 
 See the usage-information for more details (`sysbox help exec-stdin`), but consider this a simple union of `awk`, `xargs`, and GNU parallel (since we can run multiple commands in parallel).
+
 
 
 ## expect
@@ -217,6 +227,7 @@ For examples please consult the output of `sysbox help expect`, but a simple exa
 ```
 
 
+
 ## find
 
 The find sub-command allows finding files/directories that match a given number
@@ -233,9 +244,11 @@ By default the names of files are shown, but you can view either files, director
     /etc/sane.d/magicolor.conf
 
 
+
 ## fingerd
 
 A trivial finger-server.
+
 
 
 ## html2text
@@ -245,14 +258,17 @@ connected to a system over `ssh` and there were no console viewers installed,
 (such as `lynx`, `links`, or `w3m`).
 
 
+
 ## httpd
 
 A simple HTTP-server.  Allows serving to localhost, or to the local LAN.
 
 
+
 ## http-get
 
 Very much "curl-lite", allows you to fetch the contents of a remote URL.  SSL errors, etc, are handled, but only minimal options are supported.
+
 
 
 ## ips
@@ -263,15 +279,24 @@ than trying to parse `ip -4 addr list`, although that is also the
 common approach.
 
 
+
 ## markdown-toc
 
 This tool creates a simple Markdown table-of-contents, which is useful
 for the `README.md` files as used on github.
 
 
+
 ## make-password
 
 This tool generates a single random password each time it is executed, it is designed to be quick and simple to use, rather than endlessly configurable.
+
+
+
+## rss
+
+Show a summary of the contents of the given RSS feed.  By default the links to the individual entries are shown, but it is possible to use a format-string to show more.
+
 
 
 ## run-directory
@@ -281,9 +306,11 @@ Run every executable in the given directory, optionally terminate if any command
 > The exit-code handling is what inspired this addition; the Debian version of `run-parts` supports this, but the CentOS version does not.
 
 
+
 ## splay
 
 This tool allows sleeping for a random amount of time.  This solves the problem when you have a hundred servers all running a task at the same time, triggered by `cron`, and you don't want to overwhelm a central resource that they each consume.
+
 
 
 ## ssl-expiry
@@ -293,9 +320,11 @@ A simple utility to report upon the number of hours, and days, until a given TLS
 Ideal for https-servers, but also TLS-protected SMTP hosts, etc.
 
 
+
 ## timeout
 
 Run a command, but kill it after the given number of seconds.  The command is executed with a PTY so you can run interactive things such as `top`, `mutt`, etc.
+
 
 
 ## todo
@@ -305,9 +334,11 @@ being that you can record notes for yourself, along with deadlines, in your
 code.  Later you can see which deadlines have been exceeded.
 
 
+
 ## tree
 
 Trivial command to display the contents of a filesystem, as a nested tree.  This is similar to the standard `tree` command, without the nesting and ASCII graphics.
+
 
 
 ## urls
@@ -315,9 +346,11 @@ Trivial command to display the contents of a filesystem, as a nested tree.  This
 Extract URLs from the named files, or STDIN.  URLs are parsed naively with a simple regular expression and only `http` and `https` schemes are recognized.
 
 
+
 ## validate-json
 
 Validate JSON files for correctness and syntax-errors.
+
 
 
 ## validate-xml
@@ -325,9 +358,11 @@ Validate JSON files for correctness and syntax-errors.
 Validate XML files for correctness and syntax-errors.
 
 
+
 ## version
 
 Report the version of the binary, when downloaded from our [release page](https://github.com/skx/sysbox/releases).
+
 
 
 ## validate-yaml
@@ -335,9 +370,11 @@ Report the version of the binary, when downloaded from our [release page](https:
 Validate YAML files for correctness and syntax-errors.
 
 
+
 ## watch
 
 Execute the same command constantly, with a small delay.  Useful to observe a command-completing.
+
 
 
 ## with-lock
@@ -348,9 +385,12 @@ This is perfect if you fear your cron-jobs will start slowing down and overlappi
 
 
 
+
 # Future Additions?
 
 Unlike the previous repository I'm much happier to allow submissions of new utilities, or sub-commands, in this repository.
+
+
 
 
 # Github Setup
