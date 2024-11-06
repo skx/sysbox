@@ -37,6 +37,16 @@ For example to show the link and title of entries:
 Suggestions for additional fields/details to be displayed are
 welcome via issue-reports.
 
+Format String:
+
+Currently the following values are supported:
+
+* $content The content of the entry.
+* $date The published date of the entry.
+* $guid The GUID of the entry.
+* $length The length of the entry.
+* $link The link to the entry.
+* $title The title of the entry.
 
 Usage:
 
@@ -65,6 +75,12 @@ func (r *rssCommand) processFeed(url string) error {
 				switch s {
 				case "content":
 					return ent.Content
+				case "date":
+					return ent.Published
+				case "guid":
+					return ent.GUID
+				case "length":
+					return fmt.Sprintf("%d", len(ent.Content))
 				case "link":
 					return ent.Link
 				case "title":
