@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"sort"
+	"strings"
 )
 
 // Structure for our options and state.
@@ -51,10 +52,18 @@ func (hg *httpGetCommand) Execute(args []string) int {
 		return 1
 	}
 
+	// The URL
+	url := args[0]
+
+	// We'll default to https if the protocol isn't specified.
+	if !strings.HasPrefix(url, "http") {
+		url = "https://" + url
+	}
+
 	// Make the request
-	response, err := http.Get(args[0])
+	response, err := http.Get(url)
 	if err != nil {
-		fmt.Printf("error: %s", err.Error())
+		fmt.Printf("error fetching %s: %s", url, err.Error())
 		return 1
 	}
 
