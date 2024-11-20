@@ -228,6 +228,18 @@ For examples please consult the output of `sysbox help expect`, but a simple exa
 
 
 
+## feeds
+
+The feeds sub-command retrieves the contents of the (single) remote URL which is specified, and outputs a list of all the RSS/Atom feeds which have been referenced within that file.
+
+Basic usage would be:
+
+    $ sysbox feeds https://blog.steve.fi/
+
+If no protocol is specified "https" is assumed, (for example an argument of "example.com" will be converted to https://example.com).
+
+
+
 ## find
 
 The find sub-command allows finding files/directories that match a given number
@@ -268,6 +280,12 @@ A simple HTTP-server.  Allows serving to localhost, or to the local LAN.
 ## http-get
 
 Very much "curl-lite", allows you to fetch the contents of a remote URL.  SSL errors, etc, are handled, but only minimal options are supported.
+
+Basic usage would be:
+
+    $ sysbox http-get https://example.com/
+
+If no protocol is specified "https" is assumed, (for example an argument of "example.com" will be converted to https://example.com).
 
 
 
