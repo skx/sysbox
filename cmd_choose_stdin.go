@@ -121,7 +121,7 @@ func (cs *chooseSTDINCommand) Execute(args []string) int {
 	}
 
 	//
-	// We're not running a command, so ouput the user's choice
+	// We're not running a command, so output the user's choice
 	//
 	fmt.Printf("%s\n", choice)
 	return 0
