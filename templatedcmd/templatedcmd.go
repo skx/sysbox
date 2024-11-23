@@ -4,17 +4,16 @@
 // For example the user might wish to run a command with an argument
 // like so:
 //
-//     command {}
+//	command {}
 //
 // But we also support expanding the input into fields, and selecting
 // only a single one, as per:
 //
-//     $ echo "one two" | echo {1}
-//     # -> "one"
+//	$ echo "one two" | echo {1}
+//	# -> "one"
 //
 // All arguments are available via "{}" and "{N}" will refer to the
 // Nth field of the given input.
-//
 package templatedcmd
 
 import (

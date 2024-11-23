@@ -336,10 +336,10 @@ func (e *Evaluator) Run() *Token {
 	}
 
 	// If we evaluated something we'll have a result which
-    // we'll save in the `result` variable.
-    //
-    // (We might receive input such as "", which will result
-    // in nothing being evaluated)
+	// we'll save in the `result` variable.
+	//
+	// (We might receive input such as "", which will result
+	// in nothing being evaluated)
 	if result != nil {
 		e.variables["result"] = result.Value.(float64)
 	}
