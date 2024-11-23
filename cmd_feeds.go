@@ -54,7 +54,23 @@ func (t *feedsCommand) FindFeeds(base string) ([]string, error) {
 	// Get the body.
 	defer response.Body.Close()
 
+	// Create a parser
 	z := html.NewTokenizer(response.Body)
+
+	// Use the parser to get the links
+	ret, err = t.runparser(z, base)
+
+	// Nothing found?
+	if len(ret) == 0 {
+		return ret, ErrNoFeeds
+	}
+	return ret, nil
+}
+
+// runparser uses the given parser to look for feeds, and returns those it fouind
+func (t *feedsCommand) runparser(z *html.Tokenizer, base string) ([]string, error) {
+
+	ret := []string{}
 
 	for {
 		tt := z.Next()
@@ -92,11 +108,6 @@ func (t *feedsCommand) FindFeeds(base string) ([]string, error) {
 		}
 	}
 
-	// Nothing found?
-	if len(ret) == 0 {
-		return ret, ErrNoFeeds
-	}
-	return ret, nil
 }
 
 // Execute is invoked if the user specifies `feeds` as the subcommand.

@@ -94,6 +94,67 @@ func (t *todoCommand) scanPath(path string) error {
 	return err
 }
 
+// processLine outputs any matching lines; those that contain a date and a TODO/FIXME reference.
+func (t *todoCommand) processLine(path string, line string) error {
+
+	// Does this line contain TODO, or FIXME?  If not return
+	if !strings.Contains(line, "TODO") && !strings.Contains(line, "FIXME") {
+		return nil
+	}
+
+	// remove leading/trailing space
+	line = strings.TrimSpace(line)
+
+	// Does it contain a date?
+	match := t.reg.FindStringSubmatch(line)
+
+	// OK we have a date.
+	if len(match) >= 2 {
+
+		// The date we've found
+		date := match[1]
+
+		var found time.Time
+		var err error
+
+		// Split by "/" to find the number
+		// of values we've got:
+		//
+		//   "DD/MM/YYYY"
+		//   "MM/YYYY"
+		//   "YYYY"
+		parts := strings.Split(date, "/")
+
+		switch len(parts) {
+		case 3:
+			found, err = time.Parse("02/01/2006", date)
+			if err != nil {
+				return fmt.Errorf("failed to parse %s:%s", date, err)
+			}
+		case 2:
+			found, err = time.Parse("01/2006", date)
+			if err != nil {
+				return fmt.Errorf("failed to parse %s:%s", date, err)
+			}
+		case 1:
+			found, err = time.Parse("2006", date)
+			if err != nil {
+				return fmt.Errorf("failed to parse %s:%s", date, err)
+			}
+		default:
+			return fmt.Errorf("unknown date-format %s", date)
+		}
+
+		// If the date we've parsed is before today
+		// then we alert on the line.
+		if found.Before(t.now) {
+			fmt.Printf("%s:%s\n", path, line)
+		}
+	}
+
+	return nil
+}
+
 // processFile opens a file and reads line by line for a date.
 func (t *todoCommand) processFile(path string) error {
 
@@ -129,60 +190,9 @@ func (t *todoCommand) processFile(path string) error {
 	// Process each line
 	for scanner.Scan() {
 
-		// The line we're operating upon.
-		line := scanner.Text()
-
-		// Does this line contain TODO, or FIXME?
-		if strings.Contains(line, "TODO") || strings.Contains(line, "FIXME") {
-
-			// remove leading/trailing space
-			line = strings.TrimSpace(line)
-
-			// Does it contain a date?
-			match := t.reg.FindStringSubmatch(line)
-
-			// OK we have a date.
-			if len(match) >= 2 {
-
-				// The date we've found
-				date := match[1]
-
-				var found time.Time
-
-				// Split by "/" to find the number
-				// of values we've got:
-				//
-				//   "DD/MM/YYYY"
-				//   "MM/YYYY"
-				//   "YYYY"
-				parts := strings.Split(date, "/")
-
-				switch len(parts) {
-				case 3:
-					found, err = time.Parse("02/01/2006", date)
-					if err != nil {
-						return fmt.Errorf("failed to parse %s:%s", date, err)
-					}
-				case 2:
-					found, _ = time.Parse("01/2006", date)
-					if err != nil {
-						return fmt.Errorf("failed to parse %s:%s", date, err)
-					}
-				case 1:
-					found, _ = time.Parse("2006", date)
-					if err != nil {
-						return fmt.Errorf("failed to parse %s:%s", date, err)
-					}
-				default:
-					return fmt.Errorf("unknown date-format %s", date)
-				}
-
-				// If the date we've parsed is before today
-				// then we alert on the line.
-				if found.Before(t.now) {
-					fmt.Printf("%s:%s\n", path, line)
-				}
-			}
+		err := t.processLine(path, scanner.Text())
+		if err != nil {
+			return err
 		}
 	}
 

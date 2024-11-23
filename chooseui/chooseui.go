@@ -21,6 +21,15 @@ type ChooseUI struct {
 
 	// The users' choice.
 	chosen string
+
+	// app is the global application
+	app *tview.Application
+
+	// list contains the global list of text-entries.
+	list *tview.List
+
+	// inputField contains the global text-input field.
+	inputField *tview.InputField
 }
 
 // New creates a new UI, allowing the user to select from the available options.
@@ -30,55 +39,43 @@ func New(choices []string) *ChooseUI {
 }
 
 // Choose launches our user interface.
-func (ui *ChooseUI) Choose() string {
+func (ui *ChooseUI) SetupUI() {
 
 	//
 	// Create the console-GUI application.
 	//
-	app := tview.NewApplication()
+	ui.app = tview.NewApplication()
 
 	//
 	// Create a list to hold our files.
 	//
-	list := tview.NewList()
-	list.ShowSecondaryText(false)
-	list.SetWrapAround(false)
+	ui.list = tview.NewList()
+	ui.list.ShowSecondaryText(false)
+	ui.list.SetWrapAround(false)
 
 	//
 	// Add all the choices to it.
 	//
 	for _, entry := range ui.Choices {
-		list.AddItem(entry, "", ' ', nil)
+		ui.list.AddItem(entry, "", ' ', nil)
 	}
-
-	//
-	// If the user presses return in the list then choose that item.
-	//
-	list.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		if event.Key() == tcell.KeyEnter {
-			selected := list.GetCurrentItem()
-			ui.chosen, _ = list.GetItemText(selected)
-			app.Stop()
-		}
-		return event
-	})
 
 	//
 	// Create a filter input-view
 	//
-	inputField := tview.NewInputField().
+	ui.inputField = tview.NewInputField().
 		SetLabel("Filter: ").
 		SetDoneFunc(func(key tcell.Key) {
 			if key == tcell.KeyEnter {
 
 				// get the selected index
-				selected := list.GetCurrentItem()
+				selected := ui.list.GetCurrentItem()
 
 				// less than the entry count?
-				if list.GetItemCount() > 0 {
-					ui.chosen, _ = list.GetItemText(selected)
+				if ui.list.GetItemCount() > 0 {
+					ui.chosen, _ = ui.list.GetItemText(selected)
 				}
-				app.Stop()
+				ui.app.Stop()
 			}
 		})
 
@@ -86,25 +83,25 @@ func (ui *ChooseUI) Choose() string {
 	// Setup the filter-function, to filter the list to
 	// only matches present in the input-field
 	//
-	inputField.SetAutocompleteFunc(func(currentText string) (entries []string) {
+	ui.inputField.SetAutocompleteFunc(func(currentText string) (entries []string) {
 		// Get text
 		input := strings.TrimSpace(currentText)
 
 		// empty? All items should be visible
 		if input == "" {
-			list.Clear()
+			ui.list.Clear()
 			for _, entry := range ui.Choices {
-				list.AddItem(entry, "", ' ', nil)
+				ui.list.AddItem(entry, "", ' ', nil)
 			}
 			return
 		}
 
 		// Otherwise filter by input
 		input = strings.ToLower(input)
-		list.Clear()
+		ui.list.Clear()
 		for _, entry := range ui.Choices {
 			if strings.Contains(strings.ToLower(entry), input) {
-				list.AddItem(entry, "", ' ', nil)
+				ui.list.AddItem(entry, "", ' ', nil)
 			}
 		}
 
@@ -120,64 +117,92 @@ func (ui *ChooseUI) Choose() string {
 	// Create a layout grid, add the filter-box and the list.
 	//
 	grid := tview.NewFlex().SetFullScreen(true).SetDirection(tview.FlexRow)
-	grid.AddItem(inputField, 1, 0, true)
-	grid.AddItem(list, 0, 1, false)
+	grid.AddItem(ui.inputField, 1, 0, true)
+	grid.AddItem(ui.list, 0, 1, false)
 	grid.AddItem(help, 2, 1, false)
+
+	ui.app.SetRoot(grid, true).SetFocus(grid).EnableMouse(true)
+
+}
+
+func (ui *ChooseUI) SetupKeyBinding() {
+
+	//
+	// If the user presses return in the list then choose that item.
+	//
+	ui.list.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if event.Key() == tcell.KeyEnter {
+			selected := ui.list.GetCurrentItem()
+			ui.chosen, _ = ui.list.GetItemText(selected)
+			ui.app.Stop()
+		}
+		return event
+	})
 
 	//
 	// Global keyboard handler, use "TAB" to switch focus.
 	//
 	// Arrows and HOME/END work as expected regardless of focus-state
 	//
-	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+	ui.app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 
 		// Home
 		case tcell.KeyHome:
-			list.SetCurrentItem(0)
+			ui.list.SetCurrentItem(0)
 
 		// End
 		case tcell.KeyEnd:
-			list.SetCurrentItem(list.GetItemCount())
+			ui.list.SetCurrentItem(ui.list.GetItemCount())
 
 		// Up arrow
 		case tcell.KeyUp:
-			selected := list.GetCurrentItem()
+			selected := ui.list.GetCurrentItem()
 			if selected > 0 {
 				selected--
 			} else {
-				selected = list.GetItemCount()
+				selected = ui.list.GetItemCount()
 			}
-			list.SetCurrentItem(selected)
+			ui.list.SetCurrentItem(selected)
 			return nil
 
 		// Down arrow
 		case tcell.KeyDown:
-			selected := list.GetCurrentItem()
+			selected := ui.list.GetCurrentItem()
 			selected++
-			list.SetCurrentItem(selected)
+			ui.list.SetCurrentItem(selected)
 			return nil
 
 		// TAB
 		case tcell.KeyTab, tcell.KeyBacktab:
-			if list.HasFocus() {
-				app.SetFocus(inputField)
+			if ui.list.HasFocus() {
+				ui.app.SetFocus(ui.inputField)
 			} else {
-				app.SetFocus(list)
+				ui.app.SetFocus(ui.list)
 			}
 			return nil
 
 		// Escape
 		case tcell.KeyEscape:
-			app.Stop()
+			ui.app.Stop()
 		}
 		return event
 	})
 
+}
+
+// Choose launches our user interface.
+func (ui *ChooseUI) Choose() string {
+
+	ui.SetupUI()
+
+	ui.SetupKeyBinding()
+
 	//
 	// Launch the application.
 	//
-	if err := app.SetRoot(grid, true).SetFocus(grid).EnableMouse(true).Run(); err != nil {
+	err := ui.app.Run()
+	if err != nil {
 		panic(err)
 	}
 
