@@ -60,10 +60,17 @@ func (t *feedsCommand) FindFeeds(base string) ([]string, error) {
 	// Use the parser to get the links
 	ret, err = t.runparser(z, base)
 
-	// Nothing found?
+	// Error? Return that.
+	if err != nil {
+		return ret, err
+	}
+
+	// No feed-links?  Then return the error-sentinel.
 	if len(ret) == 0 {
 		return ret, ErrNoFeeds
 	}
+
+	// All good
 	return ret, nil
 }
 

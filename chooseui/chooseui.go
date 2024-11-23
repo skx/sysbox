@@ -38,7 +38,7 @@ func New(choices []string) *ChooseUI {
 	return &ChooseUI{Choices: choices}
 }
 
-// Choose launches our user interface.
+// SetupUI configures the UI.
 func (ui *ChooseUI) SetupUI() {
 
 	//
@@ -125,6 +125,7 @@ func (ui *ChooseUI) SetupUI() {
 
 }
 
+// SetupKeyBinding installs the global captures, and list-specific keybindings.
 func (ui *ChooseUI) SetupKeyBinding() {
 
 	//
